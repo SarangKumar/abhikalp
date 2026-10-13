@@ -2,7 +2,7 @@ import { Edit } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import TaskStatusCard from "@/components/dashboad/project/task/task-status-card";
+import ProjectTaskOverview from "@/components/dashboad/project/task/project-task-overview";
 import MemberAvatars from "@/components/dashboad/project/member-avatars";
 import { buttonVariants } from "@/components/ui/button";
 import { ScoreRing } from "@/components/ui/score-ring";
@@ -153,36 +153,11 @@ const ProjectPage = async ({ params }: Props) => {
             </Link>
           </div>
         </section>
-        <section className="grid grid-cols-1 content-start gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="section-title text-base">Tasks ({total})</h2>
-            <Link
-              className={buttonVariants({ variant: "link", size: "sm" })}
-              href={href("/todo")}
-            >
-              View all
-            </Link>
-          </div>
-          {tasks.slice(0, 4).map((task) => (
-            <TaskStatusCard
-              projectName={project.title}
-              task={task}
-              key={task.id}
-            />
-          ))}
-          {can.edit(role) && (
-            <Link
-              href={href("/todo?new=1")}
-              className={buttonVariants({
-                variant: "outline",
-                size: "lg",
-                className: "border-dashed text-xs font-normal",
-              })}
-            >
-              + Add a new Task
-            </Link>
-          )}
-        </section>
+        <ProjectTaskOverview
+          tasks={tasks}
+          todoHref={href("/todo")}
+          canEdit={can.edit(role)}
+        />
       </div>
     </div>
   );
