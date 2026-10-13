@@ -26,14 +26,14 @@ const ProjectNavLinks = ({
       <Link
         href={href}
         className={cn(
-          "justify-cente flex items-center gap-x-2 rounded p-2.5 transition-colors @container hover:bg-secondary/40",
+          "justify-cente hover:bg-secondary/40 @container flex items-center gap-x-2 rounded p-2.5 transition-colors",
           isActive && "bg-secondary/40",
           disableLinks && "pointer-events-none cursor-not-allowed"
         )}
       >
         <span
           className={cn(
-            "size-5 shrink-0 text-secondary-foreground",
+            "text-muted-foreground size-5 shrink-0",
             isActive && "text-foreground"
           )}
         >
@@ -41,7 +41,7 @@ const ProjectNavLinks = ({
         </span>
         <span
           className={cn(
-            "@[2rem] project-link flex-1 -translate-x-3 whitespace-nowrap text-xs text-secondary-foreground opacity-0 transition-all @[2rem]:translate-x-0 @[2rem]:opacity-100",
+            "project-link text-muted-foreground flex-1 -translate-x-3 text-xs whitespace-nowrap opacity-0 transition-all @min-[2rem]:translate-x-0 @min-[2rem]:opacity-100",
             isActive && "text-foreground"
           )}
         >

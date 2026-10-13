@@ -1,18 +1,22 @@
 import { Metadata } from "next";
-import React from "react";
+
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "AI Assistance",
-  description:
-    "Get help with your projects using AI assistance and enhance your productivity in Project Sphere.",
+  description: `Get help with your projects using AI assistance and enhance your productivity in ${siteConfig.name}.`,
 };
 
-function AiAssistancePage({
-  params: { projectId },
+// TODO(ai-assistant): per-project chat; model comes from getSubscriptionConfig(tier).chatModel.
+export default async function AiAssistancePage({
+  params,
 }: {
-  params: { projectId: string };
+  params: Promise<{ projectId: string }>;
 }) {
-  return <div>Ai Assistance Page {projectId}</div>;
+  const { projectId } = await params;
+  return (
+    <div className="text-muted-foreground p-6">
+      AI Assistance is coming soon for project {projectId}.
+    </div>
+  );
 }
-
-export default AiAssistancePage;

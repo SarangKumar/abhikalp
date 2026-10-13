@@ -1,211 +1,144 @@
+import { Edit } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
 import { getUserBySession } from "@/app/api/utils";
-import { Gauge } from "@/components/dashboad/guage";
 import TaskStatusCard from "@/components/dashboad/project/task/task-status-card";
 import Avatar from "@/components/navbar/avatar";
 import { buttonVariants } from "@/components/ui/button";
+import { ScoreRing } from "@/components/ui/score-ring";
 import prisma from "@/lib/prisma";
 import { cn, formatDate } from "@/lib/utils";
-import { Edit } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
 
-export async function generateMetadata({
-  params: { projectId },
-}: {
-  params: { projectId: string };
-}) {
-  const user = await getUserBySession({ project: true });
+type Props = { params: Promise<{ projectId: string }> };
 
-  if (!user) return null;
-
-  const project = user.projects.find((project) => project.id === projectId);
-
-  if (!project) return null;
-
-  return {
-    title: project.title,
-    description: project.description || "",
-    url: `/dashboard/project/${projectId}`,
-  };
-}
-
-const collaboratorCount = 7;
-
-const ProjectPage = async ({
-  params: { projectId },
-}: {
-  params: { projectId: string };
-}) => {
-  const user = await getUserBySession({ project: true });
-  if (!user) return null;
-
-  const projectExists = user.projects.find(
-    (project) => project.id === projectId
-  );
-  if (!projectExists) return null;
-
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
+async function getProject(projectId: string) {
+  const user = await getUserBySession();
+  if (!user || !/^[a-f\d]{24}$/i.test(projectId)) return null;
+  return prisma.project.findFirst({
+    where: { id: projectId, ownerId: user.id },
     include: { tasks: true, owner: true },
   });
-  if (!project) return null;
+}
 
-  const taskCompleted = project.tasks.filter(
-    (task) => task.status === "COMPLETED"
-  ).length;
+export async function generateMetadata({ params }: Props) {
+  const { projectId } = await params;
+  const project = await getProject(projectId);
+  if (!project) return {};
+  return { title: project.title, description: project.description || "" };
+}
+
+const ProjectPage = async ({ params }: Props) => {
+  const { projectId } = await params;
+  const project = await getProject(projectId);
+  if (!project) notFound();
+
+  const total = project.tasks.length;
+  const count = (status: string) =>
+    project.tasks.filter((t) => t.status === status).length;
+  const rings = [
+    { label: "Completed", value: count("COMPLETED") },
+    { label: "In progress", value: count("IN_PROGRESS") },
+    { label: "Pending", value: count("PENDING") },
+  ];
 
   return (
     <div className="h-full space-y-4 p-4 text-sm md:p-6">
-      <div className="project-bg relative mb-8 flex h-60 w-full flex-col justify-between overflow-hidden rounded-md border bg-cover p-2 md:p-4">
-        <div className="flex-1">
-          <h1 className="bg-gradient-to-r from-secondary-foreground from-[10%] to-foreground/60 bg-clip-text text-xl font-bold text-transparent md:text-2xl">
-            {project.title}
-          </h1>
-        </div>
+      <div className="project-bg mesh relative mb-8 flex h-60 w-full flex-col justify-between overflow-hidden rounded-xl border p-3 md:p-5">
+        <h1 className="display from-foreground to-primary flex-1 bg-linear-to-r bg-clip-text text-xl text-transparent md:text-3xl">
+          {project.title}
+        </h1>
         <div className="flex items-end justify-between gap-x-2">
-          <div className="flex items-center gap-x-1">
-            <Gauge
-              value={taskCompleted}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
-            <Gauge
-              value={2}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
-            <Gauge
-              value={3}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
-            <Gauge
-              value={4}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
-            <Gauge
-              value={5}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
-            <Gauge
-              value={6}
-              max={project.tasks.length}
-              size={26}
-              primary="info"
-            />
+          <div className="flex items-center gap-x-3">
+            {rings.map((ring) => (
+              <div
+                key={ring.label}
+                className="flex flex-col items-center gap-1"
+              >
+                <ScoreRing
+                  size="sm"
+                  value={ring.value}
+                  max={Math.max(total, 1)}
+                  fromColor="var(--muted-foreground)"
+                  toColor="var(--primary)"
+                  label={`${ring.label}: ${ring.value} of ${total}`}
+                />
+                <span className="text-muted-foreground text-[10px]">
+                  {ring.label}
+                </span>
+              </div>
+            ))}
           </div>
-          <div className="-gap-y-0.5 flex flex-col">
-            <span className="text-[10px] italic leading-[10px] text-secondary-foreground md:text-xs">
+          <div className="flex flex-col text-right">
+            <span className="text-muted-foreground text-[10px] italic md:text-xs">
               Created: {formatDate(project.createdAt)}
             </span>
-            <span className="text-[10px] italic leading-[10px] text-secondary-foreground md:text-xs">
+            <span className="text-muted-foreground text-[10px] italic md:text-xs">
               Modified: {formatDate(project.updatedAt)}
             </span>
           </div>
         </div>
       </div>
       <div className="mb-4 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-        <h1 className="flex items-center text-xl font-semibold md:text-2xl">
-          {project?.title}{" "}
+        <h1 className="page-title flex items-center">
+          {project.title}
           <Link
             href={`/dashboard/project/${project.id}/settings`}
             className={cn(
-              buttonVariants({ variant: "ghost", size: "icon" }),
+              buttonVariants({ variant: "ghost", size: "icon-sm" }),
               "ml-2"
             )}
           >
-            <Edit
-              className="text-secondary-foreground hover:text-foreground"
-              size={16}
-            />
+            <Edit className="text-muted-foreground size-4" />
             <span className="sr-only">Edit</span>
           </Link>
         </h1>
         <div className="flex items-center gap-x-4">
-          <div className="flex -space-x-2">
-            <Avatar
-              name={project.owner.name}
-              image={project.owner.image || ""}
-              size="base"
-              className="border-2 border-foreground"
-            />
-            <Avatar
-              name={project.owner.name}
-              image={project.owner.image || ""}
-              size="base"
-              className="border-2 border-foreground"
-            />
-            <Avatar
-              name={project.owner.name}
-              image={project.owner.image || ""}
-              size="base"
-              className="border-2 border-foreground"
-            />
-            <Avatar
-              name={project.owner.name}
-              image={project.owner.image || ""}
-              size="base"
-              className="border-2 border-foreground"
-            />
-          </div>
+          {/* TODO(collaboration): show real collaborators once roles/share links exist. */}
+          <Avatar
+            name={project.owner.name}
+            image={project.owner.image || ""}
+            size="base"
+            className="ring-background ring-2"
+          />
           <Link
-            href={`/dashboard/project/${project.id}settings#share`}
-            className={cn(
-              buttonVariants({ size: "default", variant: "default" })
-            )}
+            href={`/dashboard/project/${project.id}/settings#share`}
+            className={buttonVariants()}
           >
             Invite Collaborators
           </Link>
-          {/* <Link
-            href={`/dashboard/project/${project.id}settings#share`}
-            className={cn(
-              buttonVariants({ size: "lg", variant: "default" }),
-              "hidden md:block"
-            )}
-          >
-            Invite Collaborators
-          </Link> */}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
         <section className="xl:col-span-2">
-          <p className="text-xs sm:text-sm">{project.description}</p>
+          <p className="text-xs leading-relaxed sm:text-sm">
+            {project.description}
+          </p>
         </section>
         <section className="grid grid-cols-1 gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">
-              Tasks ({project?.tasks.length})
-            </h2>
-            <Link className={cn(buttonVariants({ variant: "neon" }))} href="">
+            <h2 className="section-title text-base">Tasks ({total})</h2>
+            <Link
+              className={buttonVariants({ variant: "link", size: "sm" })}
+              href={`/dashboard/project/${project.id}/todo`}
+            >
               View all
             </Link>
           </div>
-          {project?.tasks
-            .splice(0, 4)
-            .map((task) => (
-              <TaskStatusCard
-                projectName={project.title}
-                task={task}
-                key={task.id}
-              />
-            ))}
+          {project.tasks.slice(0, 4).map((task) => (
+            <TaskStatusCard
+              projectName={project.title}
+              task={task}
+              key={task.id}
+            />
+          ))}
           <Link
             href={`/dashboard/project/${project.id}/todo`}
-            className={cn(
-              buttonVariants({
-                variant: "dashed",
-                size: "lg",
-                className: "text-xs font-normal",
-              })
-            )}
+            className={buttonVariants({
+              variant: "outline",
+              size: "lg",
+              className: "border-dashed text-xs font-normal",
+            })}
           >
             + Add a new Task
           </Link>

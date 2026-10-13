@@ -1,5 +1,4 @@
 import { PricingCardProps } from "@/components/pricing/pricing-card";
-import { generateColorMap } from "@/lib/utils";
 import {
   Box,
   Brain,
@@ -8,7 +7,6 @@ import {
   LayoutList,
   LucideHome,
   Settings,
-  Share2,
 } from "lucide-react";
 
 export const dashboardNavbarLinks = [
@@ -115,6 +113,7 @@ export const navLinks = [
 
 export const pricingPlans: PricingCardProps[] = [
   {
+    tier: "FREE",
     name: "Free",
     description: "Essential Tools for Starters",
     price: 0,
@@ -141,9 +140,9 @@ export const pricingPlans: PricingCardProps[] = [
         description: "Collaborate with team members using basic tools.",
       },
     ],
-    link: "/",
   },
   {
+    tier: "GOLD",
     name: "Gold",
     description: "Advanced Features for Growing Teams",
     price: 299.99,
@@ -177,9 +176,9 @@ export const pricingPlans: PricingCardProps[] = [
         description: "Use exclusive templates and themes for your projects.",
       },
     ],
-    link: "https://buy.stripe.com/test_aEUg0K14LcTOfcI001",
   },
   {
+    tier: "PLATINUM",
     name: "Platinum",
     description: "Comprehensive Tools for Professionals",
     pricingHeader: "Includes everything in Gold, plus: ",
@@ -224,7 +223,6 @@ export const pricingPlans: PricingCardProps[] = [
           "Receive personalized assistance from a dedicated account manager.",
       },
     ],
-    link: "https://buy.stripe.com/test_dR69Cm8xd1b6ggM5kk",
   },
 ];
 
@@ -469,9 +467,3 @@ export const pricingFaq = [
       " We accept all major credit cards. For enterprise customers, we also offer invoicing options.",
   },
 ];
-
-export const BACKWARD_COLORS = generateColorMap(
-  [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-  "green",
-  "red"
-);

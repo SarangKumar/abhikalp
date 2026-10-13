@@ -1,0 +1,69 @@
+@keyframes vinyaas-tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-tooltip-in-bottom {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-tooltip-in-left {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateX(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-tooltip-in-right {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.vinyaas-tooltip-in {
+  animation: vinyaas-tooltip-in 160ms cubic-bezier(0.22, 1.25, 0.36, 1);
+  transform-origin: center bottom;
+}
+
+.vinyaas-tooltip-in[data-side="bottom"] {
+  animation-name: vinyaas-tooltip-in-bottom;
+  transform-origin: center top;
+}
+
+.vinyaas-tooltip-in[data-side="left"] {
+  animation-name: vinyaas-tooltip-in-left;
+  transform-origin: right center;
+}
+
+.vinyaas-tooltip-in[data-side="right"] {
+  animation-name: vinyaas-tooltip-in-right;
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyaas-tooltip-in {
+    animation: none;
+  }
+}

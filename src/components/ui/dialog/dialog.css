@@ -1,0 +1,36 @@
+@keyframes vinyaas-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-dialog-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.vinyaas-dialog-in {
+  animation: vinyaas-dialog-in 160ms ease-out;
+}
+
+.vinyaas-dialog-out {
+  animation: vinyaas-dialog-out 160ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyaas-dialog-in,
+  .vinyaas-dialog-out {
+    animation: none;
+  }
+}

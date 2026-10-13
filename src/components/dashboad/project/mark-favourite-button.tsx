@@ -1,10 +1,12 @@
 "use client";
+
+import { Star } from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { notify } from "@/lib/notify";
 import { cn } from "@/lib/utils";
-import axios from "axios";
-import { Loader2, Star } from "lucide-react";
-import React, { useState } from "react";
-import { toast } from "sonner";
 
 const MarkFavouriteButton = ({
   projectId,
@@ -19,50 +21,54 @@ const MarkFavouriteButton = ({
   const handleFavourite = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/v1/project/favourite", {
-        projectId,
+      const res = await fetch("/api/v1/project/favourite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId }),
       });
-
-      if (response.data.success) {
-        setFavourite((prev) => !prev);
-        if (response.data.data.isFavourite) {
-          toast.success("Project marked as favourite");
-        } else {
-          toast.success("Project marked as not favourite");
-        }
+      const data = await res.json();
+      if (data.success) {
+        setFavourite(data.data.isFavourite);
+        notify.success(
+          data.data.isFavourite
+            ? "Project marked as favourite"
+            : "Project marked as not favourite"
+        );
       } else {
-        toast.error("Failed to mark project as favourite");
+        notify.error("Failed to mark project as favourite");
       }
     } catch (error) {
       console.error(error);
+      notify.error("Failed to mark project as favourite");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        onClick={handleFavourite}
-        className="z-20 h-8 w-8 border"
-        size="icon"
-      >
-        {loading ? (
-          <Loader2 size={16} className="animate-spin" />
-        ) : (
-          <>
-            <Star
-              className={cn("", favourite ? "fill-primary stroke-primary" : "")}
-              size={14}
-            />
-            <span className="sr-only">
-              {favourite ? "Marked favourite" : "Marked not favourite"}
-            </span>
-          </>
-        )}
-      </Button>
-    </>
+    <Button
+      variant="outline"
+      onClick={handleFavourite}
+      className="z-20"
+      size="icon-sm"
+      disabled={loading}
+    >
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <Star
+            className={cn(
+              "size-3.5",
+              favourite && "fill-primary stroke-primary"
+            )}
+          />
+          <span className="sr-only">
+            {favourite ? "Marked favourite" : "Marked not favourite"}
+          </span>
+        </>
+      )}
+    </Button>
   );
 };
 

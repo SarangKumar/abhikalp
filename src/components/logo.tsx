@@ -1,6 +1,10 @@
-import { cn } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
+
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
+
+const markClass =
+  "bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg font-extrabold uppercase shadow-[0_0_16px_var(--logo-glow)]";
 
 const Logo = ({
   className,
@@ -13,26 +17,16 @@ const Logo = ({
     return (
       <Link
         href="/"
-        className={cn(
-          "flex h-8 w-8 items-center justify-center rounded bg-primary font-extrabold uppercase text-white shadow-sm",
-          className
-        )}
+        aria-label={`${siteConfig.name} home`}
+        className={cn(markClass, className)}
       >
-        P
+        {siteConfig.logoMark}
       </Link>
     );
-  } else {
-    return (
-      <span
-        className={cn(
-          "flex h-8 w-8 items-center justify-center rounded bg-primary font-extrabold uppercase text-white shadow-sm",
-          className
-        )}
-      >
-        P
-      </span>
-    );
   }
+  return (
+    <span className={cn(markClass, className)}>{siteConfig.logoMark}</span>
+  );
 };
 
 export default Logo;

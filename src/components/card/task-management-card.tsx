@@ -1,6 +1,7 @@
 "use client";
-import { CircleCheckBig, Sparkles, Target } from "lucide-react";
+import { Target } from "lucide-react";
 import Flame from "./flame";
+import { siteConfig } from "@/config/site";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -26,7 +27,7 @@ const TaskManagementCard = ({ className }: { className?: string }) => {
     <section
       className={cn(
         "card",
-        "group/card grid grid-cols-1 gap-4 @container/card lg:grid-cols-2",
+        "group/card @container/card grid grid-cols-1 gap-4 lg:grid-cols-2",
         className
       )}
       ref={cardsRef}
@@ -37,16 +38,16 @@ const TaskManagementCard = ({ className }: { className?: string }) => {
       <div className="flex flex-row justify-between @sm/card:justify-center">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2 lg:items-start">
-            <span className="grid size-10 place-items-center rounded bg-background">
+            <span className="bg-background grid size-10 place-items-center rounded">
               <Target className="stroke-primary stroke-[1.8]" />
             </span>
-            <h3 className="text-center text-lg font-medium text-foreground lg:text-left">
+            <h3 className="text-foreground text-center text-lg font-medium lg:text-left">
               Effortless Task Management
             </h3>
-            <p className="text-balance text-center text-sm text-secondary-foreground lg:text-left">
-              Stay organized and boost productivity with Project Sphere&apos;s
-              Task Tracker. Manage tasks seamlessly and keep your projects on
-              track.
+            <p className="text-muted-foreground text-center text-sm text-balance lg:text-left">
+              Stay organized and boost productivity with {siteConfig.name}
+              &apos;s Task Tracker. Manage tasks seamlessly and keep your
+              projects on track.
             </p>
           </div>
           <menu className="hidden space-y-1 lg:block">

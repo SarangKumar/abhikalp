@@ -9,10 +9,10 @@ const ProjectHeader = ({
   project: Project;
 }) => {
   return (
-    <header className="sticky top-0 z-30 flex h-12 items-center gap-x-2 border-b bg-background px-4 py-4 text-xs text-secondary-foreground md:px-6">
+    <header className="bg-background text-muted-foreground sticky top-0 z-30 flex h-12 items-center gap-x-2 border-b px-4 py-4 text-xs md:px-6">
       <Link
         href="/dashboard"
-        className="flex size-7 items-center justify-center rounded bg-secondary/40"
+        className="bg-secondary/40 flex size-7 items-center justify-center rounded"
       >
         <span className="sr-only">Go to Dashboard</span>
         <ChevronLeft size={18} />
@@ -21,7 +21,7 @@ const ProjectHeader = ({
         {title}
         {isPrivate && (
           <LockKeyhole
-            className="stroke-[1.8] text-secondary-foreground"
+            className="text-muted-foreground stroke-[1.8]"
             size={14}
           />
         )}

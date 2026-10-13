@@ -1,50 +1,37 @@
 import { Metadata } from "next";
-import React from "react";
+
+import { siteConfig } from "@/config/site";
+
+const description = `Explore ${siteConfig.name}'s documentation to learn about features, API references, and how-tos. Start using ${siteConfig.name} effectively.`;
 
 export const metadata: Metadata = {
   title: {
-    template: `%s | Documentation | Project Sphere`,
-    default: "Documentation | Project Sphere",
+    template: `%s | Documentation | ${siteConfig.name}`,
+    default: `Documentation | ${siteConfig.name}`,
   },
-  description:
-    "Explore Project Sphere's documentation to learn about features, API references, and how-tos. Start using Project Sphere effectively.",
+  description,
   openGraph: {
-    title: "Documentation | Project Sphere",
-    description:
-      "Explore Project Sphere's documentation to learn about features, API references, and how-tos. Start using Project Sphere effectively.",
-    url: "https://projectsphere.com/documentation",
-    siteName: "Project Sphere",
-    images: [
-      {
-        url: "https://projectsphere.com/documentation-og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Project Sphere - Documentation",
-      },
-    ],
+    title: `Documentation | ${siteConfig.name}`,
+    description,
+    url: `${siteConfig.url}/docs`,
+    siteName: siteConfig.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Documentation | Project Sphere",
-    description:
-      "Explore Project Sphere's documentation to learn about features, API references, and how-tos. Start using Project Sphere effectively.",
-    site: "@projectsphere",
-    creator: "@projectsphere",
-    images: [
-      {
-        url: "https://projectsphere.com/documentation-twitter-image.jpg",
-        alt: "Project Sphere - Documentation",
-      },
-    ],
+    title: `Documentation | ${siteConfig.name}`,
+    description,
   },
-  alternates: {
-    canonical: "https://projectsphere.com/documentation",
-  },
+  alternates: { canonical: `${siteConfig.url}/docs` },
 };
 
+// TODO(docs): real documentation content.
 const DocumentationPage = () => {
-  return <div>DocumentationPage</div>;
+  return (
+    <div className="text-muted-foreground p-6">
+      Documentation is coming soon.
+    </div>
+  );
 };
 
 export default DocumentationPage;

@@ -1,14 +1,21 @@
 import React from "react";
 
+import { cn } from "@/lib/utils";
+
 const Container = ({
   children,
   className,
 }: {
   children: React.ReactNode;
-  className: string;
+  className?: string;
 }) => {
   return (
-    <section className="sm:py-18 container relative mx-auto mb-0 px-4 py-16 pb-8 md:px-8 md:py-24 lg:px-16 lg:py-24 xl:px-20">
+    <section
+      className={cn(
+        "relative mx-auto px-4 py-16 pb-8 md:px-8 md:py-24 lg:px-16 xl:px-20",
+        className
+      )}
+    >
       {children}
     </section>
   );

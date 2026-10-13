@@ -8,21 +8,21 @@ const ColabCard = ({ className }: { className?: string }) => {
     <section
       className={cn(
         "card",
-        "group/card relative grid grid-cols-1 gap-4 @container/card",
+        "group/card @container/card relative grid grid-cols-1 gap-4",
         className
       )}
     >
-      <span className="absolute -bottom-4 -left-4 -z-30 h-3/4 w-2/3 rounded-full bg-primary opacity-20 blur-3xl" />
+      <span className="bg-primary absolute -bottom-4 -left-4 -z-30 h-3/4 w-2/3 rounded-full opacity-20 blur-3xl" />
       <div className="flex flex-row justify-between @sm/card:justify-center">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2 lg:items-start">
-            <span className="grid size-10 place-items-center rounded bg-background">
+            <span className="bg-background grid size-10 place-items-center rounded">
               <MousePointerClick className="stroke-primary stroke-[1.8]" />
             </span>
-            <h3 className="text-center text-lg font-medium text-foreground lg:text-left">
+            <h3 className="text-foreground text-center text-lg font-medium lg:text-left">
               Seamless Project Sharing
             </h3>
-            <p className="text-balance text-center text-sm text-secondary-foreground lg:text-left">
+            <p className="text-muted-foreground text-center text-sm text-balance lg:text-left">
               Easily share your projects with others using secure, shareable
               links. Collaborate with teammates or showcase your work to clients
               and stakeholders.
@@ -48,17 +48,17 @@ const ColabCard = ({ className }: { className?: string }) => {
               size={24}
               className="fill-primary/80 stroke-primary stroke-[0.8]"
             />
-            <span className="relative -top-4 left-6 rounded-full border border-border bg-background px-2 py-0.5 text-xxs">
+            <span className="border-border bg-background text-xxs relative -top-4 left-6 rounded-full border px-2 py-0.5">
               Sarang
             </span>
           </span>
 
-          <span className="relative z-50 -translate-y-2 translate-x-96 transition-transform duration-500 ease-out group-hover/card:-translate-y-6 group-hover/card:translate-x-20">
+          <span className="relative z-50 translate-x-96 -translate-y-2 transition-transform duration-500 ease-out group-hover/card:translate-x-20 group-hover/card:-translate-y-6">
             <MousePointer2
               size={24}
               className="fill-primary/80 stroke-primary stroke-[0.8]"
             />
-            <span className="relative -top-4 left-6 rounded-full border border-border bg-background px-2 py-0.5 text-xxs">
+            <span className="border-border bg-background text-xxs relative -top-4 left-6 rounded-full border px-2 py-0.5">
               User 2
             </span>
           </span>

@@ -1,31 +1,48 @@
+import Link from "next/link";
+
 import { siteConfig } from "@/config/site";
+import { navLinks } from "@/constants";
 
 export function Footer() {
   return (
-    <footer className="">
-      <div className="mx-auto flex flex-col items-center justify-between gap-4 px-4 md:h-24 md:flex-row md:px-6 lg:max-w-screen-1.5xl">
-        <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
-          Built by{" "}
+    <footer className="border-border/60 mt-auto border-t">
+      <div className="mx-auto flex max-w-352 flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between md:px-6 md:py-8">
+        <div className="space-y-1">
+          <p className="text-foreground/90 text-[13px] font-medium tracking-tight">
+            {siteConfig.name}
+          </p>
+          <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+            Built by{" "}
+            <a
+              href={siteConfig.author.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-foreground font-medium underline underline-offset-4"
+            >
+              Sarang
+            </a>{" "}
+            with lots of effort, debugging skills.
+          </p>
+        </div>
+        <nav className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px]">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-foreground inline-flex min-h-8 items-center transition-colors"
+            >
+              {link.title}
+            </Link>
+          ))}
           <a
-            href="https://github.com/SarangKumar/"
+            href={siteConfig.links.github}
             target="_blank"
             rel="noreferrer"
-            className="font-medium underline underline-offset-4"
+            className="hover:text-foreground inline-flex min-h-8 items-center transition-colors"
           >
-            Sarang
-          </a>{" "}
-          with lots of effort, debugging skills
-          {/* and{" "}
-          <a
-            href="https://chatgpt.com"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium underline underline-offset-4"
-          >
-            ChatGPT
-          </a> */}
-          .
-        </p>
+            GitHub
+          </a>
+        </nav>
       </div>
     </footer>
   );

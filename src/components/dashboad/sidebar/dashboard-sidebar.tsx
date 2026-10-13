@@ -1,49 +1,44 @@
-import React from "react";
+import Link from "next/link";
+
+import Logo from "@/components/logo";
+import { siteConfig } from "@/config/site";
 import { dashboardNavbarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
-import SidebarStatus from "./sidebar-status";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+
 import ActiveLink from "./active-link";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import SidebarStatus from "./sidebar-status";
 
 const DashboardSidebar = ({ className }: { className?: string }) => {
   return (
     <aside
       className={cn(
-        "xs:w-1/5 sticky top-0 hidden h-dvh max-w-[280px] shrink flex-col border-r sm:w-full md:flex",
+        "border-border/60 bg-card/40 sticky top-0 hidden h-dvh w-full max-w-[280px] shrink-0 flex-col border-r md:flex",
         className
       )}
     >
-      <h3 className="flex h-12 items-center truncate border-b px-6 text-lg text-foreground">
+      <Link
+        href="/"
+        className="border-border/60 flex h-12 items-center gap-2 truncate border-b px-6 font-semibold tracking-tight"
+      >
+        <Logo className="size-6 rounded-md text-xs" />
         Dashboard
-      </h3>
+        <span className="sr-only">{siteConfig.name}</span>
+      </Link>
       <div className="block flex-1 overflow-y-auto text-sm">
         {dashboardNavbarLinks.map((sectionLink) => (
-          <menu
-            className="space-y-2 border-b p-4 md:p-6"
+          <ul
+            className="border-border/60 space-y-2 border-b p-4 md:p-6"
             key={sectionLink.name}
           >
-            <li className="truncate font-light text-secondary-foreground">
+            <li className="meta text-muted-foreground truncate tracking-wide uppercase">
               {sectionLink.name}
             </li>
-            {sectionLink.links.map((link) => {
-              return (
-                <li key={link.title} className="truncate">
-                  <ActiveLink href={link.href}>{link.title}</ActiveLink>
-                </li>
-              );
-            })}
-          </menu>
+            {sectionLink.links.map((link) => (
+              <li key={link.title} className="truncate">
+                <ActiveLink href={link.href}>{link.title}</ActiveLink>
+              </li>
+            ))}
+          </ul>
         ))}
       </div>
       <SidebarStatus className="p-4" />
@@ -52,25 +47,3 @@ const DashboardSidebar = ({ className }: { className?: string }) => {
 };
 
 export default DashboardSidebar;
-
-export const DashboardSidebarMain = () => {
-  return (
-    <aside>
-      <div className="p-0 md:hidden">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button size="icon" variant="ghost">
-              <Menu />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] p-0">
-            <DashboardSidebar />
-          </SheetContent>
-        </Sheet>
-      </div>
-      <div className="hidden md:block">
-        <DashboardSidebar className="border-t" />
-      </div>
-    </aside>
-  );
-};

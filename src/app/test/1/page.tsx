@@ -1,11 +1,10 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
+import { auth } from "@/lib/auth";
 
 const Test1 = async () => {
-  const data = await getServerSession(authOptions);
-  // {"user":{"email":"satvik@gmail.com","image":null}}
-
-  return <div>Test1 {JSON.stringify(data)}</div>;
+  const data = await auth();
+  return (
+    <pre className="p-6 text-xs">Session: {JSON.stringify(data, null, 2)}</pre>
+  );
 };
 
 export default Test1;

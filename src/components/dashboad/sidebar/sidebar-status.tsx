@@ -1,11 +1,12 @@
+import Link from "next/link";
+
 import { getUserBySession } from "@/app/api/utils";
-import React from "react";
-import { Gauge } from "../guage";
-import { BACKWARD_COLORS } from "@/constants";
+import { Badge } from "@/components/ui/badge";
+import { ScoreRing } from "@/components/ui/score-ring";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
+/** Project usage vs. plan limit, plus the current plan. */
 const SidebarStatus = async ({ className }: { className?: string }) => {
   const user = await getUserBySession({ project: true });
   if (!user) return null;
@@ -16,28 +17,31 @@ const SidebarStatus = async ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "relative flex items-center justify-start gap-x-2 space-y-1 text-sm @container",
+        "@container relative flex items-center justify-start gap-x-2 text-sm",
         className
       )}
     >
-      <Gauge
-        className="shrink-0"
+      <ScoreRing
+        size="xs"
         value={projectCount}
         max={projectLimit}
-        primary={BACKWARD_COLORS}
-        size="36px"
+        fromColor="var(--success)"
+        toColor="var(--destructive)"
+        label={`${projectCount} of ${projectLimit} projects used`}
+        className="shrink-0"
       />
-
-      <div
-        className={cn(
-          "hidden h-full flex-1 -translate-x-1 flex-col items-start opacity-0 transition-all duration-700 @[3rem]:flex @[3rem]:translate-x-0 @[3rem]:opacity-100",
-          "project-link"
-        )}
-      >
-        <span className="w-full truncate whitespace-nowrap text-xs md:text-sm">
-          {user.name} {user.subscription}
+      <div className="project-link hidden h-full min-w-0 flex-1 -translate-x-1 flex-col items-start opacity-0 transition-all duration-700 @min-[3rem]:flex @min-[3rem]:translate-x-0 @min-[3rem]:opacity-100">
+        <span className="flex w-full items-center gap-1.5 truncate text-xs whitespace-nowrap md:text-sm">
+          {user.name}
+          <Link href="/dashboard/settings">
+            <Badge
+              variant={user.subscription === "FREE" ? "secondary" : "default"}
+            >
+              {user.subscription}
+            </Badge>
+          </Link>
         </span>
-        <span className="line-clamp-1 truncate whitespace-nowrap text-xs text-secondary-foreground">
+        <span className="text-muted-foreground line-clamp-1 truncate text-xs whitespace-nowrap">
           {user.email}
         </span>
       </div>

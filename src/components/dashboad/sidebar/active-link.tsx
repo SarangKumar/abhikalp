@@ -23,7 +23,7 @@ const ActiveLink = ({
       {...props}
       href={href}
       className={cn(
-        "w-full text-secondary-foreground hover:text-foreground",
+        "text-muted-foreground hover:text-foreground w-full",
         isActive && "text-foreground",
         className
       )}

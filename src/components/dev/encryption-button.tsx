@@ -1,9 +1,8 @@
 "use client";
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { GeistMono } from "geist/font/mono";
 
 const TARGET_TEXT = "Encrypt data";
 const CYCLES_PER_LETTER = 2;
@@ -64,8 +63,8 @@ export const EncryptButton = ({
       onMouseEnter={scramble}
       onMouseLeave={stopScramble}
       className={cn(
-        "group relative overflow-hidden rounded-md border border-border px-4 py-2 font-medium uppercase transition-colors hover:text-primary",
-        GeistMono.className
+        "group border-border hover:text-primary relative overflow-hidden rounded-md border px-4 py-2 font-medium uppercase transition-colors",
+        "font-mono"
       )}
     >
       <div className="relative z-10 flex items-center gap-2">
@@ -85,7 +84,7 @@ export const EncryptButton = ({
           duration: 1,
           ease: "linear",
         }}
-        className="absolute inset-0 z-0 scale-125 bg-gradient-to-t from-indigo-400/0 from-40% via-primary/100 to-primary/0 to-60% opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="via-primary/100 to-primary/0 absolute inset-0 z-0 scale-125 bg-gradient-to-t from-indigo-400/0 from-40% to-60% opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
     </motion.button>
   );

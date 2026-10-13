@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
-import usersData from "./user.json" assert { type: "json" };
-import projectsData from "./project.json" assert { type: "json" };
-import tasksData from "./task.json" assert { type: "json" };
+import usersData from "./user.json" with { type: "json" };
+import projectsData from "./project.json" with { type: "json" };
+import tasksData from "./task.json" with { type: "json" };
 
 const prisma = new PrismaClient();
 

@@ -1,20 +1,9 @@
 import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
 
-interface MarkdownRenderProps {
-  children: string;
-}
-
-const MarkdownRender: React.FC<MarkdownRenderProps> = ({ children }) => {
-  return (
-    <div className="prose-h6:text- prose-xs rounded">
-      <ReactMarkdown
-      //    remarkPlugins={[remarkGfm]}
-      >
-        {children}
-      </ReactMarkdown>
-    </div>
-  );
-};
+const MarkdownRender = ({ children }: { children: string }) => (
+  <div className="prose prose-sm dark:prose-invert prose-headings:mb-2 prose-headings:mt-3 prose-a:text-primary max-w-none">
+    <ReactMarkdown>{children}</ReactMarkdown>
+  </div>
+);
 
 export default MarkdownRender;

@@ -1,37 +1,53 @@
-import { getUserBySession } from "@/app/api/utils";
-import React from "react";
-import { AvatarHoverCard } from "../navbar/user-profile";
-import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+
+import { getUserBySession } from "@/app/api/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+import { AvatarHoverCard } from "../navbar/user-profile";
 import DashboardSidebar from "./sidebar/dashboard-sidebar";
 
 const DashboardNavbar = async ({ title }: { title: string }) => {
   const user = await getUserBySession({ project: false });
-
   if (!user) return null;
+
   return (
     <Sheet>
-      <div className="sticky top-0 z-20 bg-background">
-        <header className="flex h-12 items-center justify-between border-b px-4 md:px-6">
+      <div className="bg-background/70 sticky top-0 z-20 backdrop-blur-xl">
+        <header className="border-border/60 flex h-12 items-center justify-between border-b px-4 md:px-6">
           <span className="flex items-center gap-x-2">
-            <SheetTrigger asChild className="md:hidden">
-              <Button size="icon" variant="ghost">
-                <Menu />
+            <SheetTrigger>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                className="md:hidden"
+                aria-label="Open navigation"
+              >
+                <Menu className="size-4" />
               </Button>
             </SheetTrigger>
-            <p className="text-sm text-secondary-foreground">{title}</p>
+            <p className="section-title text-muted-foreground">{title}</p>
           </span>
-          <AvatarHoverCard
-            name={user.name}
-            email={user.email}
-            image={user.image}
-            size="sm"
-          />
+          <span className="flex items-center gap-x-1.5">
+            <ThemeToggle />
+            <AvatarHoverCard
+              name={user.name}
+              email={user.email}
+              image={user.image}
+              size="sm"
+            />
+          </span>
         </header>
       </div>
       <SheetContent side="left" className="w-[280px] p-0">
-        <DashboardSidebar className="flex" />
+        <SheetTitle className="sr-only">Navigation</SheetTitle>
+        <DashboardSidebar className="flex h-full w-full max-w-none border-r-0" />
       </SheetContent>
     </Sheet>
   );

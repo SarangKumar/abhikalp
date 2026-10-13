@@ -1,0 +1,65 @@
+/*
+ * Toasts slide in from the edge they are anchored to (--vinyaas-toast-x/y)
+ * and slide back out on dismiss. Center positions slide vertically.
+ */
+[data-toaster] {
+  --vinyaas-toast-x: 0px;
+  --vinyaas-toast-y: 0.75rem;
+}
+
+[data-toaster][data-position="top-left"],
+[data-toaster][data-position="top-center"],
+[data-toaster][data-position="top-right"] {
+  --vinyaas-toast-y: -0.75rem;
+}
+
+[data-toaster][data-position="top-left"],
+[data-toaster][data-position="bottom-left"] {
+  --vinyaas-toast-x: -1.5rem;
+  --vinyaas-toast-y: 0px;
+}
+
+[data-toaster][data-position="top-right"],
+[data-toaster][data-position="bottom-right"] {
+  --vinyaas-toast-x: 1.5rem;
+  --vinyaas-toast-y: 0px;
+}
+
+@keyframes vinyaas-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--vinyaas-toast-x), var(--vinyaas-toast-y))
+      scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-toast-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--vinyaas-toast-x), var(--vinyaas-toast-y))
+      scale(0.96);
+  }
+}
+
+.vinyaas-toast-in {
+  animation: vinyaas-toast-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vinyaas-toast-out {
+  animation: vinyaas-toast-out 160ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyaas-toast-in,
+  .vinyaas-toast-out {
+    animation: none;
+  }
+}

@@ -1,66 +1,70 @@
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata, Viewport } from "next";
-import { Inter as FontSans } from "next/font/google";
-import "@/styles/globals.css";
-import { cn } from "@/lib/utils";
-import { siteConfig } from "@/config/site";
+import { Geist, Geist_Mono } from "next/font/google";
+
 import { TailwindIndicator } from "@/components/dev/tailwind-indicator";
 import Providers from "@/components/providers";
-import { GeistSans } from "geist/font/sans";
-import { Analytics } from "@vercel/analytics/react";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toast";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
-const fontSans = FontSans({
+import "./globals.css";
+
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} - Transform Your Project Workflow`,
+    default: `${siteConfig.name} - ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
   },
   metadataBase: new URL(siteConfig.url),
   description: siteConfig.description,
-  keywords: [
-    "Project Sphere",
-    "Open Source",
-    "Components",
-    "Design System",
-    "Tech Stack",
-    "OpenAI",
-  ],
-  authors: [
-    {
-      name: "Sarang Kumar",
-      url: "https://github.com/sarangKumar",
-    },
-  ],
+  applicationName: siteConfig.name,
+  keywords: [siteConfig.name, ...siteConfig.keywords],
+  authors: [siteConfig.author],
+  creator: siteConfig.author.name,
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.name,
+    title: `${siteConfig.name} - ${siteConfig.tagline}`,
+    description: siteConfig.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.name} - ${siteConfig.tagline}`,
+    description: siteConfig.description,
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0812" },
   ],
+  colorScheme: "dark light",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn(geistSans.variable, geistMono.variable, "h-full")}
+      suppressHydrationWarning
+    >
       <body
-        className={cn(
-          "min-h-dvh bg-background antialiased selection:bg-primary/70",
-          GeistSans.className
-        )}
+        className="bg-background text-foreground selection:bg-primary/30 min-h-dvh font-sans text-[15px] antialiased"
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
+        <Toaster />
         <TailwindIndicator />
         <Analytics />
-        <Toaster />
       </body>
     </html>
   );

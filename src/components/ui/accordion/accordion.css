@@ -1,0 +1,37 @@
+@keyframes vinyaas-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--vinyaas-accordion-content-height);
+  }
+}
+
+@keyframes vinyaas-accordion-up {
+  from {
+    height: var(--vinyaas-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.vinyaas-accordion-panel {
+  overflow: hidden;
+}
+
+.vinyaas-accordion-down {
+  animation: vinyaas-accordion-down 320ms cubic-bezier(0.32, 0.72, 0, 1)
+    forwards;
+}
+
+.vinyaas-accordion-up {
+  animation: vinyaas-accordion-up 320ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyaas-accordion-down,
+  .vinyaas-accordion-up {
+    animation: none;
+  }
+}

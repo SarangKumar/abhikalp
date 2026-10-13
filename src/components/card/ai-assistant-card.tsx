@@ -7,20 +7,20 @@ const AiAssistantCard = ({ className }: { className?: string }) => {
     <section
       className={cn(
         "card",
-        "group/card grid grid-cols-1 gap-4 @container/card",
+        "group/card @container/card grid grid-cols-1 gap-4",
         className
       )}
     >
       <div className="flex flex-row justify-between @sm/card:justify-center">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2 lg:items-start">
-            <span className="grid size-10 place-items-center rounded bg-background">
+            <span className="bg-background grid size-10 place-items-center rounded">
               <Bot className="stroke-primary stroke-[1.8]" />
             </span>
-            <h3 className="text-center text-lg font-medium text-foreground lg:text-left">
+            <h3 className="text-foreground text-center text-lg font-medium lg:text-left">
               AI-Powered Assistance
             </h3>
-            <p className="text-balance text-center text-sm text-secondary-foreground lg:text-left">
+            <p className="text-muted-foreground text-center text-sm text-balance lg:text-left">
               Enhance your projects with our advanced AI assistance. From
               generating content to providing insights, our AI is here to help
               you succeed.

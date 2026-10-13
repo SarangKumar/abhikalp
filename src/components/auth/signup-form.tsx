@@ -1,17 +1,18 @@
 "use client";
-import React, { useState } from "react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import axios from "axios";
-import SubmitButton from "./submit-button";
-import { toast } from "sonner";
+
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { notify } from "@/lib/notify";
 import { SignupSchema } from "@/types/schema";
+
+import SubmitButton from "./submit-button";
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
   const [userdata, setUserdata] = useState({
     name: "",
     email: "",
@@ -21,51 +22,42 @@ const SignupForm = () => {
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-
     const validation = SignupSchema.safeParse(userdata);
-    console.log(validation);
-
     if (!validation.success) {
-      validation.error.errors.forEach((error) => {
-        toast.error(error.message);
-      });
-      setLoading(false);
+      validation.error.issues.forEach((issue) => notify.error(issue.message));
       return;
     }
 
+    setLoading(true);
     try {
-      const response = await axios.post("/api/v1/auth/sign-up", userdata);
-
-      if (response.data.success) {
-        toast.success(response.data.message.description);
+      const res = await fetch("/api/v1/auth/sign-up", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userdata),
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify.success(data.message.description);
         router.push("/auth/sign-in");
       } else {
-        toast.error(response.data.message.description);
+        notify.error(data.message?.description ?? "Sign up failed");
       }
-    } catch (error: any) {
-      console.log(error.message);
-      throw new Error(error.message);
+    } catch (error) {
+      console.error(error);
+      notify.error("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserdata({
-      ...userdata,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setUserdata({ ...userdata, [e.target.name]: e.target.value });
 
   return (
     <form onSubmit={handleSignup} className="my-6 space-y-4">
-      <div className="space-y-1">
-        <Label htmlFor="name" className="font-normal">
-          Username
-        </Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="username">Username</Label>
         <Input
-          className="text-xs text-secondary-foreground"
           name="name"
           id="username"
           placeholder="Alice Doe"
@@ -73,59 +65,49 @@ const SignupForm = () => {
           value={userdata.name}
           autoComplete="username"
           onChange={handleChange}
-          type="text"
         />
       </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="email" className="font-normal">
-          Email
-        </Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email">Email</Label>
         <Input
-          className="text-xs text-secondary-foreground"
           name="email"
           id="email"
           placeholder="example@example.com"
           required
+          autoComplete="email"
           onChange={handleChange}
           value={userdata.email}
           type="email"
         />
       </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="password" className="font-normal">
-          Password
-        </Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password">Password</Label>
         <Input
           name="password"
-          // required
           id="password"
-          autoComplete="current-password"
+          required
+          autoComplete="new-password"
           placeholder="••••••••"
           type="password"
           onChange={handleChange}
           value={userdata.password}
         />
       </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="confirm-password" className="font-normal">
-          Confirm Password
-        </Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirm-password">Confirm Password</Label>
         <Input
           name="confirmPassword"
+          id="confirm-password"
           required
-          id="password"
-          autoComplete="current-password"
+          autoComplete="new-password"
           placeholder="••••••••"
           type="password"
           onChange={handleChange}
           value={userdata.confirmPassword}
         />
       </div>
-      <div className="space-y-1 py-3">
-        <SubmitButton loading={loading} className="h-9 w-full">
+      <div className="py-3">
+        <SubmitButton loading={loading} className="w-full">
           Sign Up
         </SubmitButton>
       </div>

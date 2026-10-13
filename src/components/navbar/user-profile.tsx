@@ -1,10 +1,10 @@
-import React from "react";
+import { SignOutButton } from "@/components/auth/auth-button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "../ui/hover-card";
-import { SignOutButton } from "../auth/auth-button";
+} from "@/components/ui/hover-card";
+
 import Avatar from "./avatar";
 
 export const UserProfile = ({
@@ -18,13 +18,10 @@ export const UserProfile = ({
 }) => {
   return (
     <div className="flex items-center gap-x-2">
-      <>
-        <Avatar image={image} name={name} size="base" />
-        <span className="sr-only">{name} thumbnail</span>
-      </>
-      <div className="flex flex-col items-start">
-        <span className="text-xxs">{name}</span>
-        <span className="text-xxs">{email}</span>
+      <Avatar image={image} name={name} size="base" />
+      <div className="flex min-w-0 flex-col items-start">
+        <span className="truncate text-sm font-medium">{name}</span>
+        <span className="text-muted-foreground truncate text-xs">{email}</span>
       </div>
     </div>
   );
@@ -41,26 +38,19 @@ export const AvatarHoverCard = ({
   image: string | null | undefined;
   size?: "sm" | "base" | "lg";
 }) => {
-  name = name || "";
-  email = email || "";
-  image = image || "";
-
+  const n = name || "";
   return (
     <HoverCard>
-      <HoverCardTrigger asChild>
-        <button>
-          <>
-            <Avatar image={image} name={name} size={size} />
-            <span className="sr-only">{name}&apos;s profile</span>
-          </>
+      <HoverCardTrigger>
+        <button type="button" className="rounded-full">
+          <Avatar image={image || ""} name={n} size={size} />
+          <span className="sr-only">{n}&apos;s profile</span>
         </button>
       </HoverCardTrigger>
-      <HoverCardContent>
-        <div className="">
-          <UserProfile name={name} email={email} image={image} />
-          <div className="mt-4 flex justify-end">
-            <SignOutButton>Sign Out</SignOutButton>
-          </div>
+      <HoverCardContent align="end" className="w-64">
+        <UserProfile name={n} email={email || ""} image={image || ""} />
+        <div className="mt-4 flex justify-end">
+          <SignOutButton>Sign Out</SignOutButton>
         </div>
       </HoverCardContent>
     </HoverCard>

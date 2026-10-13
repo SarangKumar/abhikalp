@@ -1,35 +1,33 @@
 "use client";
 
-import { login, logout } from "@/actions/auth";
-import { Button, buttonVariants } from "../ui/button";
-import { VariantProps } from "class-variance-authority";
 import { signIn, signOut } from "next-auth/react";
-import { useFormStatus } from "react-dom";
+import { useState } from "react";
 
-export interface SignInButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-  provider: string;
+import { Button, type ButtonProps } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+
+export interface SignInButtonProps extends ButtonProps {
+  provider: "google" | "github";
+  callbackUrl?: string;
 }
 
 export const SignInButton = ({
   provider,
-  className,
+  callbackUrl = "/dashboard",
   children,
   ...props
 }: SignInButtonProps) => {
-  const { pending } = useFormStatus();
+  const [pending, setPending] = useState(false);
   return (
     <Button
-      className={className}
-      onClick={() =>
-        signIn(provider, { callbackUrl: "/dashboard", redirect: true })
-      }
-      // login(provider)
       {...props}
+      disabled={pending || props.disabled}
+      onClick={() => {
+        setPending(true);
+        void signIn(provider, { callbackUrl });
+      }}
     >
-      {pending ? "..." : children}
+      {pending ? <Spinner /> : children}
     </Button>
   );
 };
@@ -43,8 +41,10 @@ export const SignOutButton = ({
 }) => {
   return (
     <Button
+      size="sm"
+      variant="secondary"
       className={className}
-      onClick={() => signOut({ callbackUrl: "/", redirect: true })}
+      onClick={() => signOut({ callbackUrl: "/" })}
     >
       {children}
     </Button>

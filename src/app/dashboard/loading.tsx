@@ -8,7 +8,7 @@ const DashboardLoading = () => {
       <DashboardSidebar className="border-t" />
       <main className="flex-1">
         <div className="h-dvh w-full">
-          <header className="sticky top-0 flex h-[49px] items-center justify-between gap-x-2 border-b bg-background px-6 py-4 text-xs text-secondary-foreground">
+          <header className="bg-background text-muted-foreground sticky top-0 flex h-[49px] items-center justify-between gap-x-2 border-b px-6 py-4 text-xs">
             <Skeleton className="h-6 w-28 rounded" />
             <Skeleton className="h-7 w-7 rounded-full" />
           </header>
@@ -28,7 +28,7 @@ export default DashboardLoading;
 
 const SkeletonProjectCard = () => {
   return (
-    <div className="group relative flex h-[184px] cursor-pointer rounded-md border bg-secondary/40 p-5 pb-4 text-left transition duration-150 ease-in-out hover:border-foreground/20 hover:bg-secondary/80">
+    <div className="group bg-secondary/40 hover:border-foreground/20 hover:bg-secondary/80 relative flex h-[184px] cursor-pointer rounded-md border p-5 pb-4 text-left transition duration-150 ease-in-out">
       <div className="flex w-full flex-col gap-y-2">
         <div className="flex items-center justify-between gap-x-4 gap-y-2">
           <Skeleton className="h-8 w-8 rounded-full" />

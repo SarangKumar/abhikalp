@@ -1,0 +1,265 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* `dark:` utilities follow the .dark class on <html> (set by next-themes). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Theme — Vinyaas tokens (oklch), purple brand, styled after Aavedak:
+ * dark-first, Geist, 0.75rem radius, thin translucent borders, cards a step
+ * lighter than the page and form fields recessed a step darker.
+ * Surfaces (dark), darkest -> lightest: --input < --background < --card <
+ * --popover < --muted/--secondary/--accent.
+ * Brand hue lives in one place: change --brand-h to re-colour the app.
+ */
+:root {
+  color-scheme: light;
+  --brand-h: 295;
+  --radius: 0.75rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0.01 var(--brand-h));
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0.01 var(--brand-h));
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0.01 var(--brand-h));
+  --primary: oklch(0.54 0.22 var(--brand-h));
+  --primary-foreground: oklch(0.985 0.01 var(--brand-h));
+  --secondary: oklch(0.965 0.008 var(--brand-h));
+  --secondary-foreground: oklch(0.22 0.02 var(--brand-h));
+  --muted: oklch(0.965 0.008 var(--brand-h));
+  --muted-foreground: oklch(0.5 0.02 var(--brand-h));
+  --accent: oklch(0.95 0.025 var(--brand-h));
+  --accent-foreground: oklch(0.3 0.08 var(--brand-h));
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0.935 0.008 var(--brand-h));
+  --ring: oklch(0.54 0.22 var(--brand-h));
+
+  --success: oklch(0.6 0.15 155);
+  --warning: oklch(0.75 0.16 75);
+  --info: oklch(0.6 0.17 250);
+
+  --chart-1: oklch(0.54 0.22 var(--brand-h));
+  --chart-2: oklch(0.58 0.14 210);
+  --chart-3: oklch(0.58 0.16 160);
+  --chart-4: oklch(0.65 0.17 50);
+  --chart-5: oklch(0.55 0.18 340);
+
+  --glow: oklch(0.6 0.2 var(--brand-h) / 28%);
+  --mesh-a: oklch(0.85 0.1 var(--brand-h) / 35%);
+  --mesh-b: oklch(0.88 0.07 320 / 22%);
+  --mesh-c: oklch(0.9 0.05 260 / 16%);
+  --logo-glow: oklch(0.6 0.2 var(--brand-h) / 45%);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.12 0.012 var(--brand-h));
+  --foreground: oklch(0.97 0.005 var(--brand-h));
+  --card: oklch(0.165 0.015 var(--brand-h));
+  --card-foreground: oklch(0.955 0.006 var(--brand-h));
+  --popover: oklch(0.185 0.017 var(--brand-h));
+  --popover-foreground: oklch(0.97 0.005 var(--brand-h));
+  --primary: oklch(0.68 0.2 var(--brand-h));
+  --primary-foreground: oklch(0.16 0.05 var(--brand-h));
+  --secondary: oklch(0.2 0.018 var(--brand-h));
+  --secondary-foreground: oklch(0.97 0.005 var(--brand-h));
+  --muted: oklch(0.2 0.018 var(--brand-h));
+  --muted-foreground: oklch(0.72 0.02 var(--brand-h));
+  --accent: oklch(0.24 0.04 var(--brand-h));
+  --accent-foreground: oklch(0.97 0.005 var(--brand-h));
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(0.08 0.01 var(--brand-h));
+  --ring: oklch(0.6 0.18 var(--brand-h));
+
+  --success: oklch(0.72 0.15 155);
+  --warning: oklch(0.82 0.15 80);
+  --info: oklch(0.7 0.14 250);
+
+  --chart-1: oklch(0.7 0.18 var(--brand-h));
+  --chart-2: oklch(0.72 0.12 210);
+  --chart-3: oklch(0.72 0.12 160);
+  --chart-4: oklch(0.75 0.14 60);
+  --chart-5: oklch(0.7 0.15 340);
+
+  --glow: oklch(0.68 0.2 var(--brand-h) / 22%);
+  --mesh-a: oklch(0.45 0.16 var(--brand-h) / 24%);
+  --mesh-b: oklch(0.38 0.1 320 / 16%);
+  --mesh-c: oklch(0.32 0.08 260 / 12%);
+  --logo-glow: oklch(0.7 0.2 var(--brand-h) / 40%);
+}
+
+@theme inline {
+  --default-font-family:
+    var(--font-geist-sans), "Geist Fallback", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-sans: var(--default-font-family);
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-xxs: 0.75rem;
+  --breakpoint-3xl: 112rem;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --animate-wave: wave 2s ease-in-out infinite;
+  --animate-fade: fade 1.44s infinite ease-out both;
+  --animate-fade-up: fade-up 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60%,
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @keyframes fade {
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+    10% {
+      opacity: 0.8;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  main {
+    overflow-x: clip;
+  }
+
+  /* Text fields draw their own focus ring; everything else gets the global one. */
+  :focus-visible:not(input):not(textarea) {
+    @apply ring-ring/60 ring-offset-background ring-2 ring-offset-2 outline-none;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Landing feature card. */
+  .card {
+    @apply border-border bg-card text-card-foreground hover:border-primary/40 relative min-h-[380px] overflow-hidden rounded-xl border p-4 shadow-xs transition-all duration-200 hover:shadow-[0_0_32px_var(--glow)] md:p-8;
+  }
+}
+
+@utility delay-180 {
+  animation-delay: 180ms;
+}
+@utility delay-360 {
+  animation-delay: 360ms;
+}
+
+@utility mesh {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 20% 20%, var(--mesh-a), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 10%, var(--mesh-b), transparent 65%),
+    radial-gradient(ellipse 45% 35% at 60% 80%, var(--mesh-c), transparent 60%);
+}
+
+/* Typography scale (mirrors Aavedak). */
+@utility display {
+  letter-spacing: -0.04em;
+  font-weight: 650;
+}
+@utility page-title {
+  @apply text-[1.125rem] leading-snug font-semibold tracking-tight sm:text-[1.25rem];
+}
+@utility section-title {
+  @apply text-[0.875rem] leading-snug font-semibold tracking-tight;
+}
+@utility meta {
+  @apply text-[0.75rem] leading-snug;
+}
+
+@utility chip {
+  @apply border-border/80 bg-card/70 text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium backdrop-blur-sm;
+}
+@utility chip-dot {
+  @apply bg-primary size-1.5 shrink-0 rounded-full shadow-[0_0_8px_var(--glow)];
+}
+
+@utility project-bg {
+  background:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-wave,
+  .animate-fade,
+  .animate-fade-up {
+    animation: none;
+  }
+}

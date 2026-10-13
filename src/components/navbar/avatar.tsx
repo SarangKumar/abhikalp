@@ -1,7 +1,21 @@
-import Image from "next/image";
-import React from "react";
-import { cn, getInitials } from "@/lib/utils";
 import BoringAvatar from "boring-avatars";
+
+import {
+  Avatar as UiAvatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { cn, getInitials } from "@/lib/utils";
+
+const px = { sm: 24, base: 32, lg: 48 } as const;
+const box = {
+  sm: "size-6 text-[10px]",
+  base: "size-8 text-xs",
+  lg: "size-12 text-base",
+} as const;
+
+// Purple-family palette for generated avatars (matches the brand).
+const palette = ["#7c3aed", "#a855f7", "#c084fc", "#6d28d9", "#e879f9"];
 
 const Avatar = ({
   image,
@@ -15,39 +29,20 @@ const Avatar = ({
   className?: string;
 }) => {
   return (
-    <>
-      {!image ? (
-        <span className="relative">
-          <span
-            className={cn(
-              "absolute flex h-full w-full items-center justify-center rounded-full border border-primary/20 font-medium shadow",
-              size === "sm" && "h-6 w-6 text-xs",
-              size === "base" && "h-8 w-8 text-sm",
-              size === "lg" && "h-12 w-12 text-lg",
-              className
-            )}
-          >
-            {getInitials(name || "Guest")}
-          </span>
-          <BoringAvatar
-            // colors={["#c44d12", "#f08849", "#e79a1e", "#c44d12", "#1e8ae7"]}
-            // colors={["#f29c49", "#db6e23", "#ffb347", "#ff6f3c", "#ff934f"]}
-            // colors={["#ffaf40", "#ff8c00", "#ffbd69", "#ff6347", "#ffa07a"]}
-            colors={["#ff9f1c", "#ffaa00", "#ffcc80", "#ff5733", "#ff7f50"]}
-            size={size === "sm" ? 24 : size === "base" ? 32 : 48}
-            name={name}
-          />
-        </span>
-      ) : (
-        <Image
-          src={image}
-          height={size === "sm" ? 24 : size === "base" ? 32 : 48}
-          width={size === "sm" ? 24 : size === "base" ? 32 : 48}
-          alt={name}
-          className="size-8 rounded-full"
+    <UiAvatar className={cn("relative rounded-full", box[size], className)}>
+      {image ? <AvatarImage src={image} alt={name} /> : null}
+      <AvatarFallback className="relative overflow-hidden">
+        <BoringAvatar
+          size={px[size]}
+          name={name || "Guest"}
+          colors={palette}
+          className="absolute inset-0"
         />
-      )}
-    </>
+        <span className="relative font-medium text-white">
+          {getInitials(name || "Guest")}
+        </span>
+      </AvatarFallback>
+    </UiAvatar>
   );
 };
 

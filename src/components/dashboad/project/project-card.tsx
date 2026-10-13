@@ -1,11 +1,15 @@
 import { Project } from "@prisma/client";
-import Link from "next/link";
-import React from "react";
 import BoringAvatar from "boring-avatars";
-import { ChevronRight, Github, Globe, LockKeyhole } from "lucide-react";
+import { ChevronRight, Globe, LockKeyhole } from "lucide-react";
+import Link from "next/link";
+
+import { GitHubIcon } from "@/components/icons";
+import { buttonVariants } from "@/components/ui/button";
 import { cn, formatDate } from "@/lib/utils";
-import { buttonVariants } from "../../ui/button";
+
 import MarkFavouriteButton from "./mark-favourite-button";
+
+const palette = ["#7c3aed", "#a855f7", "#c084fc", "#6d28d9", "#e879f9"];
 
 const ProjectCard = ({ project }: { project: Project }) => {
   return (
@@ -13,76 +17,70 @@ const ProjectCard = ({ project }: { project: Project }) => {
       <Link
         className="absolute z-10 h-1/2 w-full"
         href={`/dashboard/project/${project.id}`}
-      ></Link>
-      <div className="hover:red-500 group relative flex h-[184px] cursor-pointer rounded-md border bg-secondary/40 p-5 pb-4 text-left transition duration-150 ease-in-out hover:border-foreground/20 hover:bg-secondary/80">
+      >
+        <span className="sr-only">Open {project.title}</span>
+      </Link>
+      <div className="group bg-card hover:border-primary/40 relative flex h-[184px] cursor-pointer rounded-xl border p-5 pb-4 text-left transition duration-150 ease-in-out hover:shadow-[0_0_24px_var(--glow)]">
         <div className="flex w-full flex-col gap-y-2">
           <div className="flex items-center justify-between gap-x-4">
-            <BoringAvatar size="32" name={project.title} />
-            <div className="flex flex-1 flex-col">
-              <p className="flex items-center gap-x-2 font-medium">
-                {project.title}{" "}
+            <BoringAvatar size={32} name={project.title} colors={palette} />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <p className="flex items-center gap-x-2 truncate font-medium">
+                {project.title}
                 {project.isPrivate && (
                   <LockKeyhole
                     size={12}
-                    className="-translate-y-0.5 stroke-[2.5] text-secondary-foreground"
+                    className="text-muted-foreground stroke-[2.5]"
                   />
                 )}
               </p>
-              <p className="text-secondary-foreground">asefasdfasferefgqerf</p>
+              <p className="text-muted-foreground meta">
+                {project.isPrivate ? "Private" : "Public"} project
+              </p>
             </div>
-            <div>
-              <ChevronRight
-                size={14}
-                className="text-secondary-foreground transition-transform group-hover:translate-x-1"
-              />
-            </div>
+            <ChevronRight
+              size={14}
+              className="text-muted-foreground transition-transform group-hover:translate-x-1"
+            />
           </div>
 
           <div className="flex-1">
-            {project.description ? (
-              <span className="line-clamp-4 text-xs text-secondary-foreground">
-                {project.description}
-              </span>
-            ) : (
-              <span className="text-xs text-secondary-foreground">
-                No description
-              </span>
-            )}
+            <span className="text-muted-foreground line-clamp-4 text-xs">
+              {project.description || "No description"}
+            </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-secondary-foreground">
+            <span className="text-muted-foreground text-xs font-medium">
               {formatDate(project.createdAt)}
             </span>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-x-2">
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
                   className={cn(
-                    buttonVariants({
-                      variant: "ghost",
-                      size: "icon",
-                      className: "h-8 w-8 border",
-                    })
+                    buttonVariants({ variant: "outline", size: "icon-sm" }),
+                    "z-20"
                   )}
                 >
                   <span className="sr-only">Github</span>
-                  <Github className="rounded-full p-1" />
+                  <GitHubIcon className="size-3.5" />
                 </a>
               )}
               {project.deployedUrl && (
                 <a
                   href={project.deployedUrl}
+                  target="_blank"
+                  rel="noreferrer"
                   className={cn(
-                    buttonVariants({
-                      variant: "ghost",
-                      size: "icon",
-                      className: "h-8 w-8 border",
-                    })
+                    buttonVariants({ variant: "outline", size: "icon-sm" }),
+                    "z-20"
                   )}
                 >
                   <span className="sr-only">Deployed Url</span>
-                  <Globe className="rounded-full p-1" />
+                  <Globe className="size-3.5" />
                 </a>
               )}
               <MarkFavouriteButton

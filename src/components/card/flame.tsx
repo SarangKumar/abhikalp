@@ -3,7 +3,7 @@ import { useState, type RefObject, useEffect } from "react";
 
 interface Props {
   cursor: { x: number; y: number };
-  cardRef: RefObject<HTMLElement>;
+  cardRef: RefObject<HTMLElement | null>;
   mouseOnCard: boolean;
 }
 
@@ -39,21 +39,21 @@ const Flame = ({ cursor, cardRef, mouseOnCard }: Props) => {
           cx={gradientCenter.cx}
           cy={gradientCenter.cy}
         >
-          {mouseOnCard && <stop stopColor="hsl(20.5 90.2% 48.2%)" />}
-          <stop offset={1} stopColor="#404040" />
+          {mouseOnCard && <stop stopColor="var(--primary)" />}
+          <stop offset={1} stopColor="var(--muted-foreground)" />
         </radialGradient>
       </defs>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="fill-neutral-950/50"
+        className="fill-background/50"
         stroke="url(#primaryGradient)"
         d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
       />
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="fill-neutral-800/50"
+        className="fill-muted/60"
         stroke="url(#primaryGradient)"
         d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"
       />
