@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project Sphere (name is config-driven)
 
-## Getting Started
+The app name, URL and repo come from `src/config/site.ts`, and you can override them with `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_SHORT_NAME` and `NEXT_PUBLIC_APP_URL`. Never hard-code the name in components. See `FEATURES.md` for the feature inventory.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, Turbopack, `src/proxy.ts`), React 19, TypeScript 5.9, Tailwind CSS v4, Vinyaas UI (`src/components/ui`), next-auth v4 (credentials, Google, GitHub), Prisma 6 with MongoDB, Stripe subscriptions, zod 4 and next-themes (purple theme with dark and light modes).
+
+## Setup
 
 ```bash
+cp .env.example .env.local   # fill in values
+npm install                  # runs prisma generate
+npx prisma db push
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`dev`, `build`, `start`, `lint`, `typecheck`, `check` (all checks), `seed`, `stripe:listen`, `format`.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Stripe
 
-## Learn More
+1. Create two recurring prices (Gold and Platinum) and set `STRIPE_PRICE_GOLD` and `STRIPE_PRICE_PLATINUM`. Plan limits live in `src/config/subscription.ts`.
+2. Enable the Customer Portal in the Stripe dashboard. Plan changes and cancellations go through the portal.
+3. Webhook: `POST /api/v1/webhook` with the events `checkout.session.completed` and `customer.subscription.created`/`updated`/`deleted`. For local testing, run `npm run stripe:listen` and copy the `whsec_...` value into `STRIPE_WEBHOOK_SECRET`.
 
-To learn more about Next.js, take a look at the following resources:
+## UI
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The components come from Vinyaas (`npx vinyaas add <name>`). Theme tokens live in `src/app/globals.css`; change `--brand-h` to re-hue the brand colour.
