@@ -17,7 +17,7 @@ const ProjectSidebar = ({
   return (
     <aside
       className={cn(
-        "sticky top-0 flex h-dvh w-14 flex-col justify-between overflow-y-hidden border-r bg-background p-2 transition-all hover:w-56",
+        "bg-background sticky top-0 flex h-dvh w-14 flex-col justify-between overflow-y-hidden border-r p-2 transition-all hover:w-56",
         className
       )}
     >
