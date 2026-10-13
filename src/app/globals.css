@@ -34,7 +34,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   /* Vinyaas draws controls as `border-input` on `bg-background`, so --input is
      a visible border colour (not a fill). */
-  --border: oklch(0.91 0.012 var(--brand-h));
+  --border: oklch(0.895 0.014 var(--brand-h));
   --input: oklch(0.85 0.02 var(--brand-h));
   --ring: oklch(0.54 0.22 var(--brand-h));
 

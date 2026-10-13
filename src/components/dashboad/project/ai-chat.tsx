@@ -99,7 +99,7 @@ export default function AiChat({
           {messages.length === 0 ? (
             <div className="mesh flex flex-col items-center gap-4 rounded-2xl border px-6 py-12 text-center">
               <span className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-full">
-                <Sparkles />
+                <Sparkles className="size-4" />
               </span>
               <div>
                 <h2 className="section-title">
@@ -186,7 +186,7 @@ export default function AiChat({
               aria-label="Stop"
               onClick={() => abortRef.current?.abort()}
             >
-              <Square />
+              <Square className="size-4" />
             </Button>
           ) : (
             <Button
@@ -195,7 +195,7 @@ export default function AiChat({
               aria-label="Send"
               disabled={!input.trim()}
             >
-              <SendHorizontal />
+              <SendHorizontal className="size-4" />
             </Button>
           )}
           {messages.length > 0 && !streaming && (
@@ -206,7 +206,7 @@ export default function AiChat({
               aria-label="Clear conversation"
               onClick={() => setMessages([])}
             >
-              <Trash2 />
+              <Trash2 className="size-4" />
             </Button>
           )}
         </div>

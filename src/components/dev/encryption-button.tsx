@@ -68,7 +68,7 @@ export const EncryptButton = ({
       )}
     >
       <div className="relative z-10 flex items-center gap-2">
-        <Lock size={16} />
+        <Lock className="size-4" />
         <span className="text-sm">{text}</span>
       </div>
       <motion.span

@@ -95,7 +95,7 @@ export default function DocsEditor({
             {dirty ? "Unsaved changes" : "All changes saved"}
           </span>
           <Button size="sm" onClick={save} disabled={!dirty || saving}>
-            {saving ? <Spinner /> : <Save />}
+            {saving ? <Spinner /> : <Save className="size-4" />}
             Save
           </Button>
         </div>

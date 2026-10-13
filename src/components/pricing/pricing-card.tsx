@@ -65,10 +65,7 @@ const PricingCard = ({
         <div className="space-y-4 py-4">
           {features.map(({ title, description }) => (
             <div className="flex items-start gap-x-2" key={title}>
-              <Check
-                size={16}
-                className="stroke-primary mt-0.5 shrink-0 stroke-2"
-              />
+              <Check className="stroke-primary mt-0.5 size-4 shrink-0 stroke-2" />
               <div className="flex flex-1 flex-col">
                 <p className="text-foreground text-xxs">{title}</p>
                 <p className="text-muted-foreground text-xxs">{description}</p>

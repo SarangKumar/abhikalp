@@ -4,7 +4,7 @@ import React from "react";
 const FeatureListItem = ({ feature }: { feature: string }) => {
   return (
     <li className="flex items-center gap-x-2 text-sm">
-      <CircleCheckBig size={16} /> {feature}
+      <CircleCheckBig className="size-4" /> {feature}
     </li>
   );
 };

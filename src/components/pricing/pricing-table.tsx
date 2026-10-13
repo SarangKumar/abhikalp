@@ -117,7 +117,7 @@ const TableRowToolTip = ({
           content={<p className="max-w-64 whitespace-normal">{description}</p>}
         >
           <span tabIndex={0} className="ml-2 inline-flex align-middle">
-            <Info className="text-muted-foreground shrink-0" size={14} />
+            <Info className="text-muted-foreground size-3.5 shrink-0" />
             <span className="sr-only">{description}</span>
           </span>
         </Tooltip>
@@ -174,14 +174,14 @@ export const TableTd = ({
   if (title === "-") {
     return (
       <td className="p-4">
-        <CircleMinus className="text-muted-foreground/80 shrink-0" size={16} />
+        <CircleMinus className="text-muted-foreground/80 size-4 shrink-0" />
       </td>
     );
   }
   if (title.toLowerCase() === "yes") {
     return (
       <td className="p-4">
-        <CircleCheck className="text-primary shrink-0" size={16} />
+        <CircleCheck className="text-primary size-4 shrink-0" />
       </td>
     );
   }

@@ -4,7 +4,6 @@ import Link from "next/link";
 import AuthenticationCard from "@/components/card/authentication-card";
 import ColabCard from "@/components/card/colab-card";
 import TaskManagementCard from "@/components/card/task-management-card";
-import WebScrapeCard from "@/components/card/web-scrape-card";
 import { Footer } from "@/components/footer";
 import Hero from "@/components/hero";
 import { Faq } from "@/components/home/faq";
@@ -44,7 +43,6 @@ export default function Home() {
             <TaskManagementCard className="lg:col-span-2" />
             <AuthenticationCard />
             <ColabCard />
-            <WebScrapeCard className="md:col-span-2 xl:col-span-4" />
           </div>
         </Section>
 

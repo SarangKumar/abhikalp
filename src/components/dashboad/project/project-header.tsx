@@ -20,12 +20,12 @@ const ProjectHeader = ({
       className="hover:bg-secondary flex size-7 items-center justify-center rounded-md"
     >
       <span className="sr-only">Go to Dashboard</span>
-      <ChevronLeft size={18} />
+      <ChevronLeft className="size-4" />
     </Link>
     <span className="text-foreground flex items-center gap-x-2 font-medium">
       {title}
       {isPrivate && (
-        <LockKeyhole className="text-muted-foreground stroke-[1.8]" size={14} />
+        <LockKeyhole className="text-muted-foreground size-3.5 stroke-[1.8]" />
       )}
     </span>
     {role !== "OWNER" && (

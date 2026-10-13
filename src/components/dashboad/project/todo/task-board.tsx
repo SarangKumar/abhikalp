@@ -233,7 +233,7 @@ export default function TaskBoard({
         </NativeSelect>
         {canEdit && (
           <Button onClick={() => setDraft(emptyDraft())}>
-            <Plus /> New task
+            <Plus className="size-4" /> New task
           </Button>
         )}
       </div>
@@ -290,7 +290,7 @@ export default function TaskBoard({
                       aria-label={`Add task to ${col.label}`}
                       onClick={() => setDraft(emptyDraft(col.status))}
                     >
-                      <Plus />
+                      <Plus className="size-4" />
                     </Button>
                   )}
                 </header>
@@ -327,7 +327,7 @@ export default function TaskBoard({
                                 variant="ghost"
                                 aria-label={`Actions for ${task.title}`}
                               >
-                                <MoreHorizontal />
+                                <MoreHorizontal className="size-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent

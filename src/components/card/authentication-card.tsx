@@ -15,7 +15,7 @@ const AuthenticationCard = ({ className }: { className?: string }) => {
         <div className="flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2 lg:items-start">
             <span className="bg-background grid size-10 place-items-center rounded">
-              <LockKeyhole className="stroke-primary stroke-[1.8]" />
+              <LockKeyhole className="stroke-primary size-5 stroke-[1.8]" />
             </span>
             <h3 className="text-foreground text-center text-lg font-medium lg:text-left">
               Secure Authentication
@@ -33,7 +33,7 @@ const AuthenticationCard = ({ className }: { className?: string }) => {
           >
             <AuthListItem>Auth Required</AuthListItem>
             <AuthListItem>
-              <ShieldCheck size={16} className="inline-flex items-center" />{" "}
+              <ShieldCheck className="inline-flex size-4 items-center" />{" "}
               Security
             </AuthListItem>
             <AuthListItem>API_SECRET</AuthListItem>

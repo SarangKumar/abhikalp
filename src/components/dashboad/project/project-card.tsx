@@ -46,10 +46,7 @@ const ProjectCard = ({
                 {project.isPrivate ? "Private" : "Public"} project
               </p>
             </div>
-            <ChevronRight
-              size={14}
-              className="text-muted-foreground transition-transform group-hover:translate-x-1"
-            />
+            <ChevronRight className="text-muted-foreground size-3.5 transition-transform group-hover:translate-x-1" />
           </div>
 
           <div className="flex-1">

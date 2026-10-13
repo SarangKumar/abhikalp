@@ -92,7 +92,7 @@ export default function ReferenceManager({
             onChange={(e) => setUrl(e.target.value)}
           />
           <Button type="submit" disabled={busy} className="sm:w-40">
-            {busy ? <Spinner /> : <Globe />}
+            {busy ? <Spinner /> : <Globe className="size-4" />}
             {busy ? "Scraping…" : "Scrape & save"}
           </Button>
         </form>
@@ -152,7 +152,7 @@ export default function ReferenceManager({
                       variant: "ghost",
                     })}
                   >
-                    <ExternalLink />
+                    <ExternalLink className="size-4" />
                   </a>
                   {canEdit && (
                     <Button
@@ -161,7 +161,7 @@ export default function ReferenceManager({
                       aria-label="Delete reference"
                       onClick={() => remove(selected.id)}
                     >
-                      <Trash2 />
+                      <Trash2 className="size-4" />
                     </Button>
                   )}
                 </div>

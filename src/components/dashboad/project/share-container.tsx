@@ -169,7 +169,11 @@ export default function MembersPanel(props: MembersPanelProps) {
               </NativeSelect>
             </div>
             <Button type="submit" disabled={busy === "invite"}>
-              {busy === "invite" ? <Spinner /> : <UserPlus />}
+              {busy === "invite" ? (
+                <Spinner />
+              ) : (
+                <UserPlus className="size-4" />
+              )}
               Invite
             </Button>
             <p className="text-muted-foreground text-xs md:col-span-4">
@@ -189,7 +193,11 @@ export default function MembersPanel(props: MembersPanelProps) {
                 setCopied(true);
               }}
             >
-              {copied ? <Check /> : <Copy />}
+              {copied ? (
+                <Check className="size-4" />
+              ) : (
+                <Copy className="size-4" />
+              )}
               {copied ? "Copied" : "Copy link"}
             </Button>
           </div>
@@ -258,7 +266,11 @@ export default function MembersPanel(props: MembersPanelProps) {
                         )
                       }
                     >
-                      {m.user.id === viewerId ? <LogOut /> : <Trash2 />}
+                      {m.user.id === viewerId ? (
+                        <LogOut className="size-4" />
+                      ) : (
+                        <Trash2 className="size-4" />
+                      )}
                     </Button>
                   )}
                 </div>
@@ -296,7 +308,7 @@ export default function MembersPanel(props: MembersPanelProps) {
                         )
                       }
                     >
-                      <Trash2 />
+                      <Trash2 className="size-4" />
                     </Button>
                   </span>
                 </li>

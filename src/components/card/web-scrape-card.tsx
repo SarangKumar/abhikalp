@@ -15,7 +15,7 @@ const WebScrapeCard = ({ className }: { className?: string }) => {
         <div className="flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2 lg:items-start">
             <span className="bg-background grid size-10 place-items-center rounded">
-              <Globe2 className="stroke-primary stroke-[1.8]" />
+              <Globe2 className="stroke-primary size-5 stroke-[1.8]" />
             </span>
             <h3 className="text-foreground text-center text-lg font-medium lg:text-left">
               Reference Integration

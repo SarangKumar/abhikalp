@@ -76,7 +76,7 @@ export default function PackageFinder() {
           />
         </div>
         <Button type="submit" disabled={loading} className="sm:w-32">
-          {loading ? <Spinner /> : <Search />} Search
+          {loading ? <Spinner /> : <Search className="size-4" />} Search
         </Button>
       </form>
       <div className="flex flex-wrap gap-2">
@@ -168,7 +168,11 @@ export default function PackageFinder() {
                       }}
                     >
                       {install}
-                      {copied === pkg.name ? <Check /> : <Copy />}
+                      {copied === pkg.name ? (
+                        <Check className="size-4" />
+                      ) : (
+                        <Copy className="size-4" />
+                      )}
                     </Button>
                     <a
                       href={
@@ -183,7 +187,7 @@ export default function PackageFinder() {
                         variant: "ghost",
                       })}
                     >
-                      <ExternalLink />
+                      <ExternalLink className="size-4" />
                     </a>
                   </div>
                 </CardContent>
