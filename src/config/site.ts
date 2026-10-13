@@ -8,8 +8,6 @@ const url = (
   process.env.NEXT_PUBLIC_APP_URL || "https://abhikalp.vercel.app"
 ).replace(/\/$/, "");
 
-const githubRepo = process.env.NEXT_PUBLIC_GITHUB_REPO || "Project-Sphere";
-
 const appName = process.env.NEXT_PUBLIC_APP_NAME || "Abhikalp";
 
 export const siteConfig = {
@@ -22,12 +20,9 @@ export const siteConfig = {
     "Abhikalp is a collaborative platform that allows users to create and manage projects. Users can sign in, create projects, share, manage it and more",
   url,
   ogImage: `${url}/og.jpg`,
-  author: { name: "Sarang Kumar", url: "https://github.com/SarangKumar" },
-  // GitHub repo for the star count + links. Defaults to the current git remote;
-  // set NEXT_PUBLIC_GITHUB_REPO after renaming the repository.
-  github: { owner: "SarangKumar", repo: githubRepo },
+  author: { name: "Sarang Kumar", url: "https://sarangkumar.vercel.app" },
   links: {
-    github: `https://github.com/SarangKumar/${githubRepo}`,
+    portfolio: "https://sarangkumar.vercel.app",
   },
   keywords: ["Project management", "Collaboration", "Tasks", "AI", "OpenAI"],
 } as const;

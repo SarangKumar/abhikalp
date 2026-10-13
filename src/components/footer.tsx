@@ -1,18 +1,73 @@
 import Link from "next/link";
 
+import Logo from "@/components/logo";
 import { siteConfig } from "@/config/site";
-import { navLinks } from "@/constants";
+
+const columns = [
+  {
+    title: "Product",
+    links: [
+      { title: "Features", href: "/#features" },
+      { title: "Pricing", href: "/pricing" },
+      { title: "FAQ", href: "/#faq" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { title: "Docs", href: "/docs" },
+      { title: "Guides", href: "/docs#guides" },
+      { title: "API reference", href: "/docs#api" },
+    ],
+  },
+  {
+    title: "Account",
+    links: [
+      { title: "Sign in", href: "/auth/sign-in" },
+      { title: "Sign up", href: "/auth/sign-up" },
+      { title: "Dashboard", href: "/dashboard" },
+    ],
+  },
+];
 
 export function Footer() {
   return (
     <footer className="border-border/60 mt-auto border-t">
-      <div className="mx-auto flex max-w-352 flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between md:px-6 md:py-8">
-        <div className="space-y-1">
-          <p className="text-foreground/90 text-[13px] font-medium tracking-tight">
-            {siteConfig.name}
+      <div className="mx-auto grid max-w-352 gap-10 px-6 py-12 md:grid-cols-[1.5fr_repeat(3,1fr)]">
+        <div className="space-y-3">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo className="size-7 text-xs" />
+            <span className="font-semibold tracking-tight">
+              {siteConfig.name}
+            </span>
+          </Link>
+          <p className="text-muted-foreground max-w-xs text-sm text-pretty">
+            {siteConfig.tagline}. Projects, tasks, docs and your team in one
+            calm place.
           </p>
-          <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
-            Built by{" "}
+        </div>
+        {columns.map((col) => (
+          <nav key={col.title} aria-label={col.title} className="space-y-3">
+            <p className="text-sm font-medium">{col.title}</p>
+            <ul className="text-muted-foreground space-y-2 text-sm">
+              {col.links.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {l.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+      <div className="border-border/60 border-t">
+        <div className="text-muted-foreground mx-auto flex max-w-352 flex-col gap-2 px-6 py-5 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {siteConfig.name}. Built by{" "}
             <a
               href={siteConfig.author.url}
               target="_blank"
@@ -23,26 +78,15 @@ export function Footer() {
             </a>{" "}
             with lots of effort, debugging skills.
           </p>
-        </div>
-        <nav className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px]">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-foreground inline-flex min-h-8 items-center transition-colors"
-            >
-              {link.title}
-            </Link>
-          ))}
           <a
-            href={siteConfig.links.github}
+            href={siteConfig.links.portfolio}
             target="_blank"
             rel="noreferrer"
-            className="hover:text-foreground inline-flex min-h-8 items-center transition-colors"
+            className="hover:text-foreground transition-colors"
           >
-            GitHub
+            Portfolio
           </a>
-        </nav>
+        </div>
       </div>
     </footer>
   );
