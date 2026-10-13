@@ -1,6 +1,6 @@
 "use client";
 
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
@@ -9,6 +9,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -48,7 +50,9 @@ export function ThemeToggle({ className }: { className?: string }) {
           <Icon className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-32">
+      <DropdownMenuContent align="end" className="min-w-36">
+        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuSeparator />
         {options.map(({ value, label, Icon: ItemIcon }) => (
           <DropdownMenuItem
             key={value}
@@ -58,6 +62,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           >
             <ItemIcon className="size-4" />
             {label}
+            {mounted && theme === value && <Check className="ml-auto size-4" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

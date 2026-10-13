@@ -21,9 +21,6 @@ const NavAuth = async () => {
 
   return (
     <div className="flex items-center gap-x-2">
-      <Link className={buttonVariants({ size: "sm" })} href="/dashboard">
-        Dashboard
-      </Link>
       <AvatarHoverCard
         name={session.user?.name}
         email={session.user?.email}
