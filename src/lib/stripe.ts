@@ -14,7 +14,7 @@ export function getStripe(): Stripe {
   if (!key) {
     throw new Error("STRIPE_SECRET_KEY is not set (see .env.example).");
   }
-  client = new Stripe(key, { appInfo: { name: "project-sphere" } });
+  client = new Stripe(key, { appInfo: { name: "abhikalp" } });
   return client;
 }
 

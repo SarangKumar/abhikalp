@@ -1,11 +1,11 @@
 [
   {
     "id": "668e9275812ee0a34e3341c1",
-    "title": "Project Sphere",
-    "description": "About Ultimate tool for team collaboration and workflow efficiency, perfect for solo developers or large teams to create, manage, and share projects effortlessly. Sphere is a project management tool that helps you organize your work and keep track of your progress. It's designed to be simple and easy to use, so you can focus on getting things done. Sphere is perfect for solo developers or large teams, and it's free to use.",
+    "title": "Abhikalp",
+    "description": "About Ultimate tool for team collaboration and workflow efficiency, perfect for solo developers or large teams to create, manage, and share projects effortlessly. Abhikalp is a project management tool that helps you organize your work and keep track of your progress. It's designed to be simple and easy to use, so you can focus on getting things done. Abhikalp is perfect for solo developers or large teams, and it's free to use.",
     "ownerId": "668e9275812ee0a34e3341b3",
-    "githubUrl": "http://github.com/SarangKumar/project-sphere",
-    "deployedUrl": "https://project-sphere.vercel.app",
+    "githubUrl": "http://github.com/SarangKumar/abhikalp",
+    "deployedUrl": "https://abhikalp.vercel.app",
     "isPrivate": true,
     "isFavourite": true,
     "createdAt": "2024-07-10T13:53:57.203Z",

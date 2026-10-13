@@ -1,4 +1,4 @@
-# Project Sphere (name is config-driven)
+# Abhikalp (name is config-driven)
 
 The app name, URL and repo come from `src/config/site.ts`, and you can override them with `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_SHORT_NAME` and `NEXT_PUBLIC_APP_URL`. Never hard-code the name in components. See `FEATURES.md` for the feature inventory.
 

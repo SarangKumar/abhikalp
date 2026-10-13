@@ -1,7 +1,7 @@
 # Feature inventory
 
-Inventory of what the app (currently branded **Project Sphere**, package
-`project-sphere`) does today and what its copy, pricing and data model say it is
+Inventory of what the app (currently branded **Abhikalp**, package
+`abhikalp`) does today and what its copy, pricing and data model say it is
 meant to do. The product name is config-driven (`src/config/site.ts`), so this
 document refers to "the app" where possible.
 

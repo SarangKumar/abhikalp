@@ -8,8 +8,7 @@ export const metadata: Metadata = {
     template: `%s | Dashboard | ${siteConfig.name}`,
     default: `Dashboard | ${siteConfig.name}`,
   },
-  description:
-    "Explore your projects and manage them efficiently on Project Sphere's dashboard. Collaborate with your team seamlessly.",
+  description: `Explore your projects and manage them efficiently on ${siteConfig.name}'s dashboard. Collaborate with your team seamlessly.`,
   alternates: {
     canonical: `${siteConfig.url}/dashboard/project`,
   },
