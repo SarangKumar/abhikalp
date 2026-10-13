@@ -13,6 +13,13 @@ import { useMemo, useState, useTransition } from "react";
 
 import MarkdownRender from "@/components/dashboad/project/task/markdown-render";
 import { Badge } from "@/components/ui/badge";
+import {
+  DragDrop,
+  DragDropHandle,
+  DragDropItem,
+  DragDropList,
+  type DragDropItems,
+} from "@/components/ui/drag-and-drop";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -56,7 +63,24 @@ export type BoardTask = {
   priority: TaskPriority;
   estimatedTimeForCompletion: number | null;
   dueDate: string | null;
+  order: number | null;
 };
+
+type Columns = Record<TaskStatus, string[]>;
+
+/** Column -> task ids in board order (legacy tasks without order keep creation order). */
+function toColumns(tasks: BoardTask[]): Columns {
+  const cols: Columns = { PENDING: [], IN_PROGRESS: [], COMPLETED: [] };
+  tasks
+    .map((t, i) => ({ t, i }))
+    .sort(
+      (a, b) =>
+        (a.t.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.t.order ?? Number.MAX_SAFE_INTEGER) || a.i - b.i
+    )
+    .forEach(({ t }) => cols[t.status].push(t.id));
+  return cols;
+}
 
 const COLUMNS: { status: TaskStatus; label: string; dot: string }[] = [
   { status: "PENDING", label: "To do", dot: "bg-muted-foreground" },
@@ -70,7 +94,7 @@ const PRIORITY_STYLE: Record<TaskPriority, string> = {
   LOW: "border-border text-muted-foreground",
 };
 
-type Draft = Omit<BoardTask, "id" | "estimatedTimeForCompletion"> & {
+type Draft = Omit<BoardTask, "id" | "estimatedTimeForCompletion" | "order"> & {
   id?: string;
   estimatedTimeForCompletion: string;
 };
@@ -102,42 +126,47 @@ export default function TaskBoard({
   );
   const [saving, setSaving] = useState(false);
   const [viewing, setViewing] = useState<BoardTask | null>(null);
-  // Optimistic status moves.
-  const [moved, setMoved] = useState<Record<string, TaskStatus>>({});
+  // Optimistic board order (status + position), re-synced from the server.
+  const [columns, setColumns] = useState<Columns>(() => toColumns(tasks));
+  const [syncedTasks, setSyncedTasks] = useState(tasks);
+  if (syncedTasks !== tasks) {
+    setSyncedTasks(tasks);
+    setColumns(toColumns(tasks));
+  }
 
   const endpoint = `/api/v1/projects/${projectId}/tasks`;
   const refresh = () => startTransition(() => router.refresh());
 
-  const visible = useMemo(
-    () =>
-      tasks
-        .map((t) => ({ ...t, status: moved[t.id] ?? t.status }))
-        .filter((t) => priority === "ALL" || t.priority === priority)
-        .filter((t) =>
-          `${t.title} ${t.description ?? ""}`
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        )
-        .sort(
-          (a, b) =>
-            PRIORITIES.indexOf(a.priority) - PRIORITIES.indexOf(b.priority)
-        ),
-    [tasks, moved, priority, query]
-  );
+  const byId = useMemo(() => new Map(tasks.map((t) => [t.id, t])), [tasks]);
+  const filtering = query.trim() !== "" || priority !== "ALL";
+  const matches = (t: BoardTask) =>
+    (priority === "ALL" || t.priority === priority) &&
+    `${t.title} ${t.description ?? ""}`
+      .toLowerCase()
+      .includes(query.toLowerCase());
+  const canDrag = canEdit && !filtering;
 
-  async function move(task: BoardTask, status: TaskStatus) {
-    setMoved((m) => ({ ...m, [task.id]: status }));
+  async function persist(next: Columns) {
+    const previous = columns;
+    setColumns(next);
     try {
-      await api(endpoint, { method: "PATCH", body: { id: task.id, status } });
+      await api(endpoint, { method: "PUT", body: { columns: next } });
       refresh();
     } catch (error) {
-      setMoved((m) => {
-        const next = { ...m };
-        delete next[task.id];
-        return next;
-      });
+      setColumns(previous);
       notify.error("Could not move task", (error as Error).message);
     }
+  }
+
+  function move(task: BoardTask, status: TaskStatus) {
+    const next = Object.fromEntries(
+      Object.entries(columns).map(([k, ids]) => [
+        k,
+        ids.filter((id) => id !== task.id),
+      ])
+    ) as Columns;
+    next[status] = [...next[status], task.id];
+    void persist(next);
   }
 
   async function remove(task: BoardTask) {
@@ -209,6 +238,11 @@ export default function TaskBoard({
         )}
       </div>
 
+      {filtering && canEdit && tasks.length > 0 && (
+        <p className="text-muted-foreground text-xs">
+          Clear the search and priority filter to drag tasks.
+        </p>
+      )}
       {tasks.length === 0 ? (
         <Empty className="rounded-xl border border-dashed py-16">
           <EmptyTitle>No tasks yet</EmptyTitle>
@@ -225,9 +259,17 @@ export default function TaskBoard({
           )}
         </Empty>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <DragDrop
+          id="task-board"
+          items={columns}
+          onReorder={(next: DragDropItems) => void persist(next as Columns)}
+          disabledIds={canDrag ? [] : tasks.map((t) => t.id)}
+          className="grid gap-4 lg:grid-cols-3"
+        >
           {COLUMNS.map((col) => {
-            const items = visible.filter((t) => t.status === col.status);
+            const items = columns[col.status]
+              .map((id) => byId.get(id))
+              .filter((t): t is BoardTask => Boolean(t) && matches(t!));
             return (
               <section
                 key={col.status}
@@ -252,105 +294,121 @@ export default function TaskBoard({
                     </Button>
                   )}
                 </header>
-                {items.map((task) => (
-                  <article
-                    key={task.id}
-                    className="bg-card hover:border-primary/40 group space-y-2 rounded-lg border p-3 shadow-xs transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <button
-                        type="button"
-                        className="text-left text-sm font-medium hover:underline"
-                        onClick={() => setViewing(task)}
-                      >
-                        {task.title}
-                      </button>
-                      {canEdit && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger>
-                            <Button
-                              size="icon-xs"
-                              variant="ghost"
-                              aria-label={`Actions for ${task.title}`}
-                            >
-                              <MoreHorizontal />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="min-w-40">
-                            <DropdownMenuLabel>Move to</DropdownMenuLabel>
-                            {COLUMNS.filter(
-                              (c) => c.status !== task.status
-                            ).map((c) => (
-                              <DropdownMenuItem
-                                key={c.status}
-                                onClick={() => move(task, c.status)}
-                              >
-                                {c.label}
-                              </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() =>
-                                setDraft({
-                                  ...task,
-                                  description: task.description ?? "",
-                                  estimatedTimeForCompletion:
-                                    task.estimatedTimeForCompletion?.toString() ??
-                                    "",
-                                  dueDate: task.dueDate?.slice(0, 10) ?? null,
-                                })
-                              }
-                            >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onClick={() => remove(task)}
-                            >
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </div>
-                    {task.description && (
-                      <p className="text-muted-foreground line-clamp-2 text-xs">
-                        {task.description}
-                      </p>
-                    )}
-                    <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-[11px]">
-                      <Badge
-                        variant="outline"
-                        className={PRIORITY_STYLE[task.priority]}
-                      >
-                        {task.priority.toLowerCase()}
-                      </Badge>
-                      {task.estimatedTimeForCompletion ? (
-                        <span className="flex items-center gap-1">
-                          <Clock5 className="size-3" />{" "}
-                          {task.estimatedTimeForCompletion}h
-                        </span>
-                      ) : null}
-                      {task.dueDate && (
-                        <span
-                          className={cn(
-                            "flex items-center gap-1",
-                            task.status !== "COMPLETED" &&
-                              new Date(task.dueDate) < new Date() &&
-                              "text-destructive"
-                          )}
+                <DragDropList
+                  id={col.status}
+                  items={items.map((t) => t.id)}
+                  className="min-h-24 flex-1 gap-2"
+                >
+                  {items.map((task) => (
+                    <DragDropItem
+                      key={task.id}
+                      id={task.id}
+                      className="bg-card hover:border-primary/40 group space-y-2 rounded-lg border p-3 shadow-xs transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        {canDrag && (
+                          <DragDropHandle
+                            aria-label={`Move ${task.title}`}
+                            className="-ml-1 shrink-0"
+                          />
+                        )}
+                        <button
+                          type="button"
+                          className="min-w-0 flex-1 text-left text-sm font-medium hover:underline"
+                          onClick={() => setViewing(task)}
                         >
-                          <CalendarClock className="size-3" />
-                          {new Date(task.dueDate).toLocaleDateString()}
-                        </span>
+                          {task.title}
+                        </button>
+                        {canEdit && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <Button
+                                size="icon-xs"
+                                variant="ghost"
+                                aria-label={`Actions for ${task.title}`}
+                              >
+                                <MoreHorizontal />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="min-w-40"
+                            >
+                              <DropdownMenuLabel>Move to</DropdownMenuLabel>
+                              {COLUMNS.filter(
+                                (c) => c.status !== task.status
+                              ).map((c) => (
+                                <DropdownMenuItem
+                                  key={c.status}
+                                  onClick={() => move(task, c.status)}
+                                >
+                                  {c.label}
+                                </DropdownMenuItem>
+                              ))}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setDraft({
+                                    ...task,
+                                    description: task.description ?? "",
+                                    estimatedTimeForCompletion:
+                                      task.estimatedTimeForCompletion?.toString() ??
+                                      "",
+                                    dueDate: task.dueDate?.slice(0, 10) ?? null,
+                                  })
+                                }
+                              >
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                variant="destructive"
+                                onClick={() => remove(task)}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+                      {task.description && (
+                        <p className="text-muted-foreground line-clamp-2 text-xs">
+                          {task.description}
+                        </p>
                       )}
-                    </div>
-                  </article>
-                ))}
+                      <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-[11px]">
+                        <Badge
+                          variant="outline"
+                          className={PRIORITY_STYLE[task.priority]}
+                        >
+                          {task.priority.toLowerCase()}
+                        </Badge>
+                        {task.estimatedTimeForCompletion ? (
+                          <span className="flex items-center gap-1">
+                            <Clock5 className="size-3" />{" "}
+                            {task.estimatedTimeForCompletion}h
+                          </span>
+                        ) : null}
+                        {task.dueDate && (
+                          <span
+                            className={cn(
+                              "flex items-center gap-1",
+                              task.status !== "COMPLETED" &&
+                                new Date(task.dueDate) < new Date() &&
+                                "text-destructive"
+                            )}
+                          >
+                            <CalendarClock className="size-3" />
+                            {new Date(task.dueDate).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </DragDropItem>
+                  ))}
+                </DragDropList>
               </section>
             );
           })}
-        </div>
+        </DragDrop>
       )}
 
       <Dialog

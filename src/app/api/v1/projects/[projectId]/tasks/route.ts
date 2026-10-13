@@ -29,6 +29,25 @@ const updateSchema = z
   .object({ id: z.string() })
   .extend(z.object(fields).partial().shape);
 
+const STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED"] as const;
+const reorderSchema = z.object({
+  columns: z.object(
+    Object.fromEntries(
+      STATUSES.map((s) => [s, z.array(z.string()).max(1000)])
+    ) as Record<(typeof STATUSES)[number], z.ZodArray<z.ZodString>>
+  ),
+});
+
+/** Next position at the end of a status column. */
+async function nextOrder(projectId: string, status: string) {
+  const last = await prisma.task.findFirst({
+    where: { projectId, status: status as (typeof STATUSES)[number] },
+    orderBy: { order: "desc" },
+    select: { order: true },
+  });
+  return (last?.order ?? -1) + 1;
+}
+
 export async function POST(req: Request, { params }: RouteCtx) {
   const ctx = await requireProject((await params).projectId, "edit");
   if ("error" in ctx) return ctx.error;
@@ -36,7 +55,11 @@ export async function POST(req: Request, { params }: RouteCtx) {
   if ("error" in body) return body.error;
 
   const task = await prisma.task.create({
-    data: { ...body.data, projectId: ctx.access.project.id },
+    data: {
+      ...body.data,
+      order: await nextOrder(ctx.access.project.id, body.data.status),
+      projectId: ctx.access.project.id,
+    },
   });
   return NextResponse.json(task, { status: 201 });
 }
@@ -49,8 +72,17 @@ export async function PATCH(req: Request, { params }: RouteCtx) {
 
   const { id, ...data } = body.data;
   if (!isObjectId(id)) return jsonError("Invalid task");
+  const projectId = ctx.access.project.id;
+  if (data.status) {
+    const current = await prisma.task.findFirst({
+      where: { id, projectId },
+      select: { status: true },
+    });
+    if (current && current.status !== data.status)
+      Object.assign(data, { order: await nextOrder(projectId, data.status) });
+  }
   const { count } = await prisma.task.updateMany({
-    where: { id, projectId: ctx.access.project.id },
+    where: { id, projectId },
     data,
   });
   if (!count) return jsonError("Task not found", 404);
@@ -66,5 +98,37 @@ export async function DELETE(req: Request, { params }: RouteCtx) {
     where: { id, projectId: ctx.access.project.id },
   });
   if (!count) return jsonError("Task not found", 404);
+  return NextResponse.json({ ok: true });
+}
+
+/** Persist board order: every task id per status column, in display order. */
+export async function PUT(req: Request, { params }: RouteCtx) {
+  const ctx = await requireProject((await params).projectId, "edit");
+  if ("error" in ctx) return ctx.error;
+  const body = await parseBody(req, reorderSchema);
+  if ("error" in body) return body.error;
+
+  const projectId = ctx.access.project.id;
+  const entries = STATUSES.flatMap((status) =>
+    body.data.columns[status].map((id, order) => ({ id, status, order }))
+  );
+  const ids = entries.map((e) => e.id);
+  if (new Set(ids).size !== ids.length || !ids.every(isObjectId))
+    return jsonError("Invalid task list");
+  const owned = await prisma.task.count({
+    where: { id: { in: ids }, projectId },
+  });
+  if (owned !== ids.length) return jsonError("Task not found", 404);
+
+  try {
+    await prisma.$transaction(
+      entries.map(({ id, status, order }) =>
+        prisma.task.update({ where: { id }, data: { status, order } })
+      )
+    );
+  } catch (error) {
+    console.error("[tasks:reorder]", (error as Error).message);
+    return jsonError("Could not save the board order. Please try again.", 500);
+  }
   return NextResponse.json({ ok: true });
 }

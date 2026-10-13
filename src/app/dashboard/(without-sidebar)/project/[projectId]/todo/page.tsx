@@ -44,6 +44,7 @@ export default async function ProjectTodoPage({
             priority: t.priority,
             estimatedTimeForCompletion: t.estimatedTimeForCompletion,
             dueDate: t.dueDate?.toISOString() ?? null,
+            order: t.order,
           }))}
         />
       </Suspense>

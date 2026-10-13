@@ -69,6 +69,7 @@ model Project {
   members    ProjectMember[]
   invites    ProjectInvite[]
   references Reference[]
+  whiteboard Whiteboard?
 
   /// Markdown project documentation (Documentation tab).
   docs String?
@@ -97,6 +98,8 @@ model Task {
   estimatedTimeForCompletion Int?
   priority                   TaskPriority @default(MEDIUM)
   dueDate                    DateTime?
+  /// Position within its status column (board order). Null = legacy, sorts by createdAt.
+  order                      Int?
 
   projectId String  @db.ObjectId
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -153,4 +156,15 @@ model Reference {
   createdAt DateTime @default(now())
 
   @@index([projectId])
+}
+
+/// Excalidraw scene for a project's Playground (one per project).
+model Whiteboard {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId   String   @unique @db.ObjectId
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  /// { elements, files, appState: { viewBackgroundColor } }
+  scene       Json
+  updatedById String?  @db.ObjectId
+  updatedAt   DateTime @updatedAt
 }
