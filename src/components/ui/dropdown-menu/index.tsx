@@ -27,7 +27,7 @@ const MenuContext = React.createContext<MenuContextValue | null>(null);
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -44,7 +44,7 @@ function useMenu() {
 
   if (!context) {
     throw new Error(
-      "Dropdown menu components must render inside DropdownMenu."
+      "Dropdown menu components must render inside DropdownMenu.",
     );
   }
 
@@ -75,7 +75,7 @@ export function DropdownMenu({
 
       onOpenChange?.(next);
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   return (
@@ -147,7 +147,7 @@ export function DropdownMenuContent({
   const contentRef = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
   const [point, setPoint] = useState<{ top: number; left: number } | null>(
-    null
+    null,
   );
 
   useLayoutEffect(() => {
@@ -194,11 +194,11 @@ export function DropdownMenuContent({
 
       left = Math.min(
         Math.max(8, left),
-        Math.max(8, window.innerWidth - content.width - 8)
+        Math.max(8, window.innerWidth - content.width - 8),
       );
       top = Math.min(
         Math.max(8, top),
-        Math.max(8, window.innerHeight - content.height - 8)
+        Math.max(8, window.innerHeight - content.height - 8),
       );
       setPoint({ top, left });
     }
@@ -251,7 +251,7 @@ export function DropdownMenuContent({
     function items() {
       return [
         ...(content?.querySelectorAll<HTMLElement>(
-          '[role="menuitem"]:not([disabled])'
+          '[role="menuitem"]:not([disabled])',
         ) ?? []),
       ];
     }
@@ -338,12 +338,12 @@ export function DropdownMenuContent({
       }}
       className={cn(
         "border-border bg-popover text-popover-foreground z-50 min-w-44 rounded-md border p-1 text-sm shadow-md motion-reduce:transition-none",
-        className
+        className,
       )}
     >
       {children}
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -368,7 +368,7 @@ export function DropdownMenuItem({
         "hover:bg-accent focus:bg-accent focus-visible:bg-accent data-[highlighted]:bg-accent flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none focus-visible:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         variant === "destructive" &&
           "text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus-visible:bg-destructive/10 data-[highlighted]:bg-destructive/10",
-        className
+        className,
       )}
       {...props}
       onClick={(event) => {
@@ -390,7 +390,7 @@ export function DropdownMenuLabel({
     <div
       className={cn(
         "text-muted-foreground px-2 py-1.5 text-xs font-medium",
-        className
+        className,
       )}
       {...props}
     />
@@ -425,7 +425,7 @@ export function DropdownMenuShortcut({
     <span
       className={cn(
         "text-muted-foreground ml-auto text-xs tracking-widest",
-        className
+        className,
       )}
       {...props}
     />
@@ -444,7 +444,7 @@ function useSub() {
 
   if (!context) {
     throw new Error(
-      "Dropdown submenu parts must render inside DropdownMenuSub."
+      "Dropdown submenu parts must render inside DropdownMenuSub.",
     );
   }
 
@@ -483,7 +483,7 @@ export function DropdownMenuSubTrigger({
       data-state={open ? "open" : "closed"}
       className={cn(
         "hover:bg-accent focus:bg-accent focus-visible:bg-accent data-[state=open]:bg-accent flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none focus-visible:outline-none",
-        className
+        className,
       )}
       {...props}
       onFocus={(event) => {
@@ -538,7 +538,7 @@ export function DropdownMenuSubContent({
       data-slot="dropdown-menu-sub-content"
       className={cn(
         "border-border bg-popover text-popover-foreground absolute top-0 left-[calc(100%-0.25rem)] z-50 ml-1 min-w-36 rounded-md border p-1 text-sm shadow-md",
-        className
+        className,
       )}
       {...props}
     >

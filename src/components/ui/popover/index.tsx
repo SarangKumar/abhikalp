@@ -27,7 +27,7 @@ const PopoverContext = React.createContext<PopoverContextValue | null>(null);
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -86,7 +86,7 @@ export function Popover({
         triggerRef.current?.focus();
       }
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   return (
@@ -141,7 +141,7 @@ export function PopoverContent({
   const { open, setOpen, contentId, triggerRef } = usePopover();
   const contentRef = useRef<HTMLDivElement>(null);
   const [point, setPoint] = useState<{ top: number; left: number } | null>(
-    null
+    null,
   );
 
   useLayoutEffect(() => {
@@ -162,7 +162,7 @@ export function PopoverContent({
       // uses w-(--popover-trigger-width)). Set before measuring the content.
       contentNode.style.setProperty(
         "--popover-trigger-width",
-        `${trigger.width}px`
+        `${trigger.width}px`,
       );
       const content = contentNode.getBoundingClientRect();
       const gap = 8;
@@ -215,11 +215,11 @@ export function PopoverContent({
 
       left = Math.min(
         Math.max(8, left),
-        Math.max(8, window.innerWidth - content.width - 8)
+        Math.max(8, window.innerWidth - content.width - 8),
       );
       top = Math.min(
         Math.max(8, top),
-        Math.max(8, window.innerHeight - content.height - 8)
+        Math.max(8, window.innerHeight - content.height - 8),
       );
       setPoint({ top, left });
     }
@@ -317,11 +317,11 @@ export function PopoverContent({
       }}
       className={cn(
         "border-border bg-muted text-foreground z-50 max-h-[min(24rem,calc(100dvh-2rem))] w-72 max-w-[calc(100vw-1rem)] overflow-x-hidden overflow-y-auto rounded-md border p-4 text-sm shadow-sm focus-visible:outline-none",
-        className
+        className,
       )}
     >
       {children}
     </div>,
-    document.body
+    document.body,
   );
 }

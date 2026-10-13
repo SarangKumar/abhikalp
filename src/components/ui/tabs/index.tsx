@@ -88,7 +88,7 @@ export function Tabs({
         className={cn(
           "group/tabs flex gap-2",
           orientation === "vertical" ? "flex-row" : "flex-col",
-          className
+          className,
         )}
         {...props}
       >
@@ -110,7 +110,7 @@ const tabsListVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export type TabsListProps = React.ComponentProps<"div"> &
@@ -148,7 +148,7 @@ export function TabsList({
         orientation === "vertical"
           ? "h-auto min-w-28 shrink-0 flex-col overflow-visible"
           : "h-9 flex-row overflow-x-auto overflow-y-hidden",
-        className
+        className,
       )}
       onKeyDown={(event) => {
         onKeyDown?.(event);
@@ -167,11 +167,11 @@ export function TabsList({
 
         const triggers = [
           ...(listRef.current?.querySelectorAll<HTMLButtonElement>(
-            '[role="tab"]'
+            '[role="tab"]',
           ) ?? []),
         ].filter((trigger) => !trigger.disabled);
         const index = triggers.indexOf(
-          document.activeElement as HTMLButtonElement
+          document.activeElement as HTMLButtonElement,
         );
 
         if (index < 0 || triggers.length === 0) {
@@ -231,7 +231,7 @@ export function TabsTrigger({
         "group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none",
         "after:bg-foreground after:absolute after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-0 group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:right-0 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
         tabs.orientation === "vertical" && "w-full justify-start",
-        className
+        className,
       )}
       {...props}
       onClick={(event) => {
@@ -277,7 +277,7 @@ export function TabsContent({
       tabIndex={0}
       className={cn(
         "ring-offset-background focus-visible:ring-ring flex-1 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        className
+        className,
       )}
       {...props}
     >

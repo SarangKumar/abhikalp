@@ -18,7 +18,7 @@ export function Spinner({
         aria-hidden="true"
         className={cn(
           "size-4 animate-spin text-current motion-reduce:animate-none",
-          className
+          className,
         )}
         {...props}
       >

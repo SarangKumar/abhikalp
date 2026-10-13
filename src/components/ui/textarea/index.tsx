@@ -47,7 +47,7 @@ export function Textarea({
   const innerRef = useRef<HTMLTextAreaElement | null>(null);
   const { value, defaultValue, maxLength } = props;
   const [uncontrolledLength, setUncontrolledLength] = useState(
-    () => String(defaultValue ?? "").length
+    () => String(defaultValue ?? "").length,
   );
   const autoGrow = maxRows !== undefined && maxRows > 0;
   const minRows = autoGrow ? Math.min(rows ?? 1, maxRows) : rows;
@@ -94,7 +94,7 @@ export function Textarea({
       className={cn(
         textareaClasses,
         autoGrow && "min-h-0 resize-none",
-        className
+        className,
       )}
       {...props}
       aria-describedby={
@@ -126,7 +126,7 @@ export function Textarea({
         data-slot="textarea-count"
         className={cn(
           "text-muted-foreground self-end text-xs tabular-nums",
-          atLimit && "text-destructive"
+          atLimit && "text-destructive",
         )}
       >
         {length}

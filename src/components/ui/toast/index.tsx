@@ -81,7 +81,7 @@ function schedule(id: string) {
     id,
     setTimeout(() => {
       dismiss(id);
-    }, duration)
+    }, duration),
   );
 }
 
@@ -127,7 +127,7 @@ function dismiss(id?: string) {
 
   clearTimer(id);
   records = records.map((entry) =>
-    entry.id === id ? { ...entry, exiting: true } : entry
+    entry.id === id ? { ...entry, exiting: true } : entry,
   );
   emit();
   exits.set(
@@ -135,7 +135,7 @@ function dismiss(id?: string) {
     setTimeout(() => {
       exits.delete(id);
       removeNow(id);
-    }, exitDuration)
+    }, exitDuration),
   );
 }
 
@@ -148,7 +148,7 @@ function update(id: string, patch: ToastInput) {
           type: patch.type ?? entry.type,
           pending: false,
         }
-      : entry
+      : entry,
   );
   emit();
   schedule(id);
@@ -277,7 +277,7 @@ export const toast = {
       loading: ToastInput;
       success: ToastInput;
       error: ToastInput;
-    }
+    },
   ) {
     // The loading state stays until the promise settles, then the success or
     // error toast gets the normal duration.
@@ -289,7 +289,7 @@ export const toast = {
       },
       () => {
         update(id, { ...messages.error, type: "error" });
-      }
+      },
     );
 
     return id;
@@ -337,7 +337,7 @@ export function Toaster({
       className={cn(
         "pointer-events-none fixed z-50 flex w-[356px] max-w-[calc(100vw-2rem)] gap-2",
         fromTop ? "flex-col" : "flex-col-reverse",
-        positionClass[position]
+        positionClass[position],
       )}
     >
       {items.map((item) => (
@@ -350,7 +350,7 @@ export function Toaster({
           // Every state shares one popover surface; only the icon changes.
           className={cn(
             "border-border bg-popover text-popover-foreground pointer-events-auto flex w-full items-start gap-2 rounded-lg border p-4 text-[13px] leading-normal shadow-lg",
-            item.exiting ? "vinyaas-toast-out" : "vinyaas-toast-in"
+            item.exiting ? "vinyaas-toast-out" : "vinyaas-toast-in",
           )}
           onMouseEnter={() => pause(item.id)}
           onMouseLeave={() => resume(item.id)}
@@ -410,6 +410,6 @@ export function Toaster({
         </div>
       ))}
     </div>,
-    document.body
+    document.body,
   );
 }

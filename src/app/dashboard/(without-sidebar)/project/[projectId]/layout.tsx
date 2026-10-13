@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import React from "react";
 
 import ProjectHeader from "@/components/dashboad/project/project-header";
-import ProjectSidebar from "@/components/dashboad/project/project-sidebar";
+import { DashboardShell } from "@/components/dashboad/sidebar/dashboard-shell";
+import { projectNav } from "@/components/dashboad/sidebar/nav";
 import { siteConfig } from "@/config/site";
 import { getProjectAccess } from "@/lib/access";
 import { requireUser } from "@/lib/session";
@@ -29,13 +30,10 @@ const DashboardProjectsLayout = async ({
   if (!access) notFound();
 
   return (
-    <div className="relative flex">
-      <ProjectSidebar projectId={projectId} />
-      <div className="w-full min-w-0">
-        <ProjectHeader project={access.project} role={access.role} />
-        <div className="h-auto text-sm">{children}</div>
-      </div>
-    </div>
+    <DashboardShell nav={projectNav(projectId)} subtitle={access.project.title}>
+      <ProjectHeader project={access.project} role={access.role} />
+      <div className="h-auto text-sm">{children}</div>
+    </DashboardShell>
   );
 };
 

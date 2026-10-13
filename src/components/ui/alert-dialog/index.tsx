@@ -24,7 +24,7 @@ type AlertDialogContextValue = {
 };
 
 const AlertDialogContext = React.createContext<AlertDialogContextValue | null>(
-  null
+  null,
 );
 
 const focusableSelector = [
@@ -42,7 +42,7 @@ let previousOverflow = "";
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -117,7 +117,7 @@ export function AlertDialog({
         triggerRef.current?.focus();
       }
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   return (
@@ -188,7 +188,7 @@ export function AlertDialogContent({
         setPresent(false);
         setExiting(false);
       },
-      reducedMotion() ? 0 : 160
+      reducedMotion() ? 0 : 160,
     );
     const mark = window.setTimeout(() => setExiting(true), 0);
 
@@ -240,7 +240,7 @@ export function AlertDialogContent({
     }
 
     const cancel = node.querySelector<HTMLElement>(
-      '[data-slot="alert-dialog-cancel"]'
+      '[data-slot="alert-dialog-cancel"]',
     );
     const first = cancel ?? node.querySelector<HTMLElement>(focusableSelector);
 
@@ -275,7 +275,7 @@ export function AlertDialogContent({
         className={cn(
           "border-border bg-background text-foreground relative z-10 flex max-h-[min(32rem,calc(100dvh-2rem))] w-full max-w-[calc(100%-2rem)] flex-col gap-4 overflow-y-auto rounded-lg border p-6 shadow-lg sm:max-w-md",
           exiting ? "vinyaas-alert-dialog-out" : "vinyaas-alert-dialog-in",
-          className
+          className,
         )}
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => {
@@ -285,7 +285,7 @@ export function AlertDialogContent({
 
           const nodes = [
             ...event.currentTarget.querySelectorAll<HTMLElement>(
-              focusableSelector
+              focusableSelector,
             ),
           ];
           const first = nodes[0];
@@ -308,7 +308,7 @@ export function AlertDialogContent({
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -334,7 +334,7 @@ export function AlertDialogFooter({
       data-slot="alert-dialog-footer"
       className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />

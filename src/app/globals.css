@@ -7,9 +7,9 @@
 /*
  * Theme — Vinyaas tokens (oklch), purple brand, styled after Aavedak:
  * dark-first, Geist, 0.75rem radius, thin translucent borders, cards a step
- * lighter than the page and form fields recessed a step darker.
- * Surfaces (dark), darkest -> lightest: --input < --background < --card <
- * --popover < --muted/--secondary/--accent.
+ * lighter than the page. Form controls (Vinyaas) use --input as a visible
+ * border on --background. Surfaces (dark), darkest -> lightest:
+ * --background < --card < --popover < --muted/--secondary/--accent.
  * Brand hue lives in one place: change --brand-h to re-colour the app.
  */
 :root {
@@ -32,8 +32,10 @@
   --accent: oklch(0.95 0.025 var(--brand-h));
   --accent-foreground: oklch(0.3 0.08 var(--brand-h));
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0 0 0 / 10%);
-  --input: oklch(0.935 0.008 var(--brand-h));
+  /* Vinyaas draws controls as `border-input` on `bg-background`, so --input is
+     a visible border colour (not a fill). */
+  --border: oklch(0.91 0.012 var(--brand-h));
+  --input: oklch(0.85 0.02 var(--brand-h));
   --ring: oklch(0.54 0.22 var(--brand-h));
 
   --success: oklch(0.6 0.15 155);
@@ -51,6 +53,15 @@
   --mesh-b: oklch(0.88 0.07 320 / 22%);
   --mesh-c: oklch(0.9 0.05 260 / 16%);
   --logo-glow: oklch(0.6 0.2 var(--brand-h) / 45%);
+
+  --sidebar: oklch(0.985 0.004 var(--brand-h));
+  --sidebar-foreground: oklch(0.145 0.01 var(--brand-h));
+  --sidebar-primary: oklch(0.54 0.22 var(--brand-h));
+  --sidebar-primary-foreground: oklch(0.985 0.01 var(--brand-h));
+  --sidebar-accent: oklch(0.95 0.025 var(--brand-h));
+  --sidebar-accent-foreground: oklch(0.3 0.08 var(--brand-h));
+  --sidebar-border: oklch(0.91 0.012 var(--brand-h));
+  --sidebar-ring: oklch(0.54 0.22 var(--brand-h));
 }
 
 .dark {
@@ -70,8 +81,8 @@
   --accent: oklch(0.24 0.04 var(--brand-h));
   --accent-foreground: oklch(0.97 0.005 var(--brand-h));
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(0.08 0.01 var(--brand-h));
+  --border: oklch(1 0 0 / 11%);
+  --input: oklch(1 0 0 / 18%);
   --ring: oklch(0.6 0.18 var(--brand-h));
 
   --success: oklch(0.72 0.15 155);
@@ -89,6 +100,15 @@
   --mesh-b: oklch(0.38 0.1 320 / 16%);
   --mesh-c: oklch(0.32 0.08 260 / 12%);
   --logo-glow: oklch(0.7 0.2 var(--brand-h) / 40%);
+
+  --sidebar: oklch(0.145 0.014 var(--brand-h));
+  --sidebar-foreground: oklch(0.97 0.005 var(--brand-h));
+  --sidebar-primary: oklch(0.68 0.2 var(--brand-h));
+  --sidebar-primary-foreground: oklch(0.16 0.05 var(--brand-h));
+  --sidebar-accent: oklch(0.22 0.035 var(--brand-h));
+  --sidebar-accent-foreground: oklch(0.97 0.005 var(--brand-h));
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.6 0.18 var(--brand-h));
 }
 
 @theme inline {
@@ -124,6 +144,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);

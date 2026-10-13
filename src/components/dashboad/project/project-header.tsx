@@ -1,3 +1,4 @@
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import type { Project, Role } from "@prisma/client";
 import { ChevronLeft, LockKeyhole } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ const ProjectHeader = ({
   role: Role;
 }) => (
   <header className="bg-background/80 text-muted-foreground sticky top-0 z-30 flex h-12 items-center gap-x-2 border-b px-4 py-4 text-xs backdrop-blur md:px-6">
+    <SidebarTrigger aria-label="Toggle navigation" className="-ml-1" />
     <Link
       href="/dashboard"
       className="hover:bg-secondary flex size-7 items-center justify-center rounded-md"

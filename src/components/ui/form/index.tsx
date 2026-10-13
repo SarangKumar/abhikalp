@@ -20,7 +20,7 @@ type FormFieldContextValue = {
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue | null>(
-  null
+  null,
 );
 
 function useFormField() {
@@ -90,7 +90,7 @@ export function FormField({
       setDescriptionMounted,
       setMessageMounted,
     }),
-    [descriptionMounted, disabled, error, id, isInvalid, messageMounted, name]
+    [descriptionMounted, disabled, error, id, isInvalid, messageMounted, name],
   );
 
   return (
@@ -133,7 +133,7 @@ export function FormLabel({ className, ...props }: FormLabelProps) {
       className={cn(
         field.invalid && "text-destructive",
         field.disabled && "opacity-50",
-        className
+        className,
       )}
       {...props}
     />
@@ -196,7 +196,7 @@ export function FormDescription({ className, ...props }: FormDescriptionProps) {
       className={cn(
         "text-muted-foreground text-sm leading-5 text-pretty",
         disabled && "opacity-50",
-        className
+        className,
       )}
       {...props}
     />
@@ -233,7 +233,7 @@ export function FormMessage({
       role="alert"
       className={cn(
         "text-destructive text-sm leading-5 font-medium",
-        className
+        className,
       )}
       {...props}
     >

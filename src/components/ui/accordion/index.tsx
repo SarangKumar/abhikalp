@@ -22,7 +22,7 @@ type AccordionContextValue = {
 };
 
 const AccordionContext = React.createContext<AccordionContextValue | null>(
-  null
+  null,
 );
 
 type ItemContextValue = {
@@ -147,7 +147,7 @@ export function Accordion({
 
     const triggers = [
       ...(rootRef.current?.querySelectorAll<HTMLButtonElement>(
-        "[data-accordion-trigger]"
+        "[data-accordion-trigger]",
       ) ?? []),
     ].filter((trigger) => !trigger.disabled);
     const index = triggers.indexOf(document.activeElement as HTMLButtonElement);
@@ -178,7 +178,7 @@ export function Accordion({
         data-type={type}
         className={cn(
           "border-border divide-border divide-y border-y",
-          className
+          className,
         )}
         onKeyDown={onKeyDown}
       >
@@ -236,7 +236,7 @@ export function AccordionTrigger({
       aria-controls={item.contentId}
       className={cn(
         "flex w-full items-center justify-between gap-3 px-3 py-3 text-left text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-        className
+        className,
       )}
       {...props}
       disabled={item.disabled || props.disabled}
@@ -257,7 +257,7 @@ export function AccordionTrigger({
         aria-hidden="true"
         className={cn(
           "size-4 shrink-0 transition-transform duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
-          item.open && "rotate-180"
+          item.open && "rotate-180",
         )}
       >
         <path
@@ -345,7 +345,7 @@ export function AccordionContent({
         "vinyaas-accordion-panel overflow-hidden",
         motion === "down" && "vinyaas-accordion-down",
         motion === "up" && "vinyaas-accordion-up",
-        className
+        className,
       )}
       style={
         {

@@ -39,7 +39,7 @@ let previousOverflow = "";
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -114,7 +114,7 @@ export function Dialog({
         triggerRef.current?.focus();
       }
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   return (
@@ -203,7 +203,7 @@ export function DialogContent({
         setPresent(false);
         setExiting(false);
       },
-      reducedMotion() ? 0 : 160
+      reducedMotion() ? 0 : 160,
     );
     const mark = window.setTimeout(() => setExiting(true), 0);
 
@@ -290,7 +290,7 @@ export function DialogContent({
           "border-border bg-background text-foreground relative z-10 flex w-full max-w-[calc(100%-2rem)] flex-col gap-4 overflow-y-auto rounded-lg border p-6 shadow-lg",
           dialogSizeClasses[size],
           exiting ? "vinyaas-dialog-out" : "vinyaas-dialog-in",
-          className
+          className,
         )}
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => {
@@ -300,7 +300,7 @@ export function DialogContent({
 
           const nodes = [
             ...event.currentTarget.querySelectorAll<HTMLElement>(
-              focusableSelector
+              focusableSelector,
             ),
           ];
           const first = nodes[0];
@@ -323,7 +323,7 @@ export function DialogContent({
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -348,7 +348,7 @@ export function DialogFooter({
       className={cn(
         // mt-auto pins the actions to the bottom of tall dialogs; sm:justify-end keeps them right.
         "mt-auto flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />

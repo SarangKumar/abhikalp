@@ -5,7 +5,8 @@ import Link from "next/link";
 import DashboardNavbar from "@/components/dashboad/dashboard-navbar";
 import ProjectCard from "@/components/dashboad/project/project-card";
 import SearchProject from "@/components/dashboad/search-project";
-import DashboardSidebar from "@/components/dashboad/sidebar/dashboard-sidebar";
+import { DashboardShell } from "@/components/dashboad/sidebar/dashboard-shell";
+import { dashboardNav } from "@/components/dashboad/sidebar/nav";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Empty,
@@ -50,9 +51,8 @@ const DashboardPage = async ({
   const sharedProjects = memberships.filter((m) => matches(m.project.title));
 
   return (
-    <div className="flex">
-      <DashboardSidebar />
-      <main className="min-w-0 flex-1">
+    <DashboardShell nav={dashboardNav}>
+      <div className="min-w-0 flex-1">
         <DashboardNavbar title="Projects" />
         <div className="w-full flex-1 px-4 py-4 text-sm md:px-6 md:py-6">
           <div className="flex flex-col items-start gap-4 pb-4 md:flex-row md:items-center">
@@ -146,8 +146,8 @@ const DashboardPage = async ({
             </Empty>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardShell>
   );
 };
 

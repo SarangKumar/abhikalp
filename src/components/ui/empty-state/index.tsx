@@ -27,7 +27,7 @@ export function Empty({
       className={cn(
         "border-border/80 bg-background text-card-foreground flex w-full min-w-0 flex-col items-center justify-center rounded-lg border border-dashed text-center",
         emptySize[size],
-        className
+        className,
       )}
       {...props}
     />
@@ -43,7 +43,7 @@ export function EmptyIcon({
       data-slot="empty-icon"
       className={cn(
         "bg-muted text-muted-foreground flex size-11 items-center justify-center rounded-full [&_svg]:size-5",
-        className
+        className,
       )}
       {...props}
     />
@@ -59,7 +59,7 @@ export function EmptyTitle({
       data-slot="empty-title"
       className={cn(
         "text-foreground min-w-0 text-base leading-snug font-medium tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -75,7 +75,7 @@ export function EmptyDescription({
       data-slot="empty-description"
       className={cn(
         "text-muted-foreground max-w-sm min-w-0 text-sm leading-6 text-pretty",
-        className
+        className,
       )}
       {...props}
     />
@@ -91,7 +91,7 @@ export function EmptyActions({
       data-slot="empty-actions"
       className={cn(
         "mt-1 flex flex-wrap items-center justify-center gap-2 pt-1",
-        className
+        className,
       )}
       {...props}
     />

@@ -27,7 +27,7 @@ export function Badge({
       className={cn(
         "inline-flex w-fit items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap [&>svg]:size-3",
         badgeVariants[variant],
-        className
+        className,
       )}
       {...props}
     />

@@ -30,7 +30,7 @@ export function Progress({
         "[&::-webkit-progress-bar]:bg-muted [&::-webkit-progress-bar]:h-full [&::-webkit-progress-bar]:w-full [&::-webkit-progress-bar]:rounded-full",
         "[&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:h-full [&::-webkit-progress-value]:rounded-full",
         "[&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full",
-        className
+        className,
       )}
     />
   );

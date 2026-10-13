@@ -1,0 +1,144 @@
+@keyframes vinyaas-drawer-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-drawer-out-right {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes vinyaas-drawer-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-drawer-out-left {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes vinyaas-drawer-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-drawer-out-top {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes vinyaas-drawer-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vinyaas-drawer-out-bottom {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes vinyaas-drawer-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vinyaas-drawer-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.vinyaas-drawer-overlay-in {
+  animation: vinyaas-drawer-overlay-in 160ms ease-out;
+}
+
+.vinyaas-drawer-overlay-out {
+  animation: vinyaas-drawer-overlay-out 160ms ease-in forwards;
+}
+
+.vinyaas-drawer-in-right {
+  animation: vinyaas-drawer-in-right 200ms ease-out;
+}
+
+.vinyaas-drawer-out-right {
+  animation: vinyaas-drawer-out-right 200ms ease-in forwards;
+}
+
+.vinyaas-drawer-in-left {
+  animation: vinyaas-drawer-in-left 200ms ease-out;
+}
+
+.vinyaas-drawer-out-left {
+  animation: vinyaas-drawer-out-left 200ms ease-in forwards;
+}
+
+.vinyaas-drawer-in-top {
+  animation: vinyaas-drawer-in-top 200ms ease-out;
+}
+
+.vinyaas-drawer-out-top {
+  animation: vinyaas-drawer-out-top 200ms ease-in forwards;
+}
+
+.vinyaas-drawer-in-bottom {
+  animation: vinyaas-drawer-in-bottom 200ms ease-out;
+}
+
+.vinyaas-drawer-out-bottom {
+  animation: vinyaas-drawer-out-bottom 200ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyaas-drawer-overlay-in,
+  .vinyaas-drawer-overlay-out,
+  .vinyaas-drawer-in-right,
+  .vinyaas-drawer-out-right,
+  .vinyaas-drawer-in-left,
+  .vinyaas-drawer-out-left,
+  .vinyaas-drawer-in-top,
+  .vinyaas-drawer-out-top,
+  .vinyaas-drawer-in-bottom,
+  .vinyaas-drawer-out-bottom {
+    animation: none;
+  }
+}

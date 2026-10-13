@@ -41,7 +41,7 @@ let previousOverflow = "";
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -152,7 +152,7 @@ export function Sheet({
         triggerRef.current?.focus();
       }
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   return (
@@ -241,7 +241,7 @@ export function SheetContent({
         setPresent(false);
         setExiting(false);
       },
-      reducedMotion() ? 0 : SHEET_EXIT_MS
+      reducedMotion() ? 0 : SHEET_EXIT_MS,
     );
     const mark = window.setTimeout(() => setExiting(true), 0);
 
@@ -312,7 +312,7 @@ export function SheetContent({
         data-slot="sheet-overlay"
         className={cn(
           "absolute inset-0 bg-black/50",
-          exiting ? "vinyaas-sheet-overlay-out" : "vinyaas-sheet-overlay-in"
+          exiting ? "vinyaas-sheet-overlay-out" : "vinyaas-sheet-overlay-in",
         )}
         onClick={() => setOpen(false)}
       />
@@ -331,7 +331,7 @@ export function SheetContent({
           "border-border bg-background text-foreground fixed z-10 flex flex-col gap-4 overflow-y-auto p-6 shadow-lg",
           contentLayout(side),
           motionClasses(side, exiting),
-          className
+          className,
         )}
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => {
@@ -341,7 +341,7 @@ export function SheetContent({
 
           const nodes = [
             ...event.currentTarget.querySelectorAll<HTMLElement>(
-              focusableSelector
+              focusableSelector,
             ),
           ];
           const first = nodes[0];
@@ -375,7 +375,7 @@ export function SheetContent({
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -401,7 +401,7 @@ export function SheetFooter({
       data-slot="sheet-footer"
       className={cn(
         "mt-auto flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />

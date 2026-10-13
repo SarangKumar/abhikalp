@@ -16,17 +16,14 @@ yarn.lock
 *.sqlite
 *.db
 *.pem
-
 # MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
-
 # Windows
 Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
-
 # IDE files
 .vscode
 .idea
@@ -37,4 +34,5 @@ ehthumbs_vista.db
 *.njsproj
 *.sln
 *.sw?
-*.bak
+*.bak# Vinyaas registry components: keep identical to upstream
+src/components/ui

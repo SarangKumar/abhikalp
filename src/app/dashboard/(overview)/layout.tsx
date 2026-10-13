@@ -1,5 +1,6 @@
 import React from "react";
-import DashboardSidebar from "@/components/dashboad/sidebar/dashboard-sidebar";
+import { DashboardShell } from "@/components/dashboad/sidebar/dashboard-shell";
+import { dashboardNav } from "@/components/dashboad/sidebar/nav";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
@@ -19,12 +20,7 @@ const DashboardLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return (
-    <div className="flex">
-      <DashboardSidebar className="border-t" />
-      <main className="flex-1">{children}</main>
-    </div>
-  );
+  return <DashboardShell nav={dashboardNav}>{children}</DashboardShell>;
 };
 
 export default DashboardLayout;

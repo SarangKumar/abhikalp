@@ -22,7 +22,7 @@ function useAvatar() {
 
   if (!context) {
     throw new Error(
-      "AvatarImage and AvatarFallback must render inside Avatar."
+      "AvatarImage and AvatarFallback must render inside Avatar.",
     );
   }
 
@@ -40,7 +40,7 @@ export function Avatar({ className, ref, ...props }: AvatarProps) {
         ref={ref}
         className={cn(
           "border-border relative flex size-10 shrink-0 rounded-full border",
-          className
+          className,
         )}
         {...props}
       />
@@ -96,7 +96,7 @@ export function AvatarImage({
       className={cn(
         "aspect-square size-full rounded-[inherit] object-cover",
         status === "loaded" ? "block" : "sr-only",
-        className
+        className,
       )}
       onLoad={(event) => {
         setStatus("loaded");
@@ -130,7 +130,7 @@ export function AvatarFallback({
       aria-hidden={status === "loading" ? true : undefined}
       className={cn(
         "bg-muted text-muted-foreground flex size-full items-center justify-center rounded-[inherit] text-xs font-medium [&_svg]:size-3.5",
-        className
+        className,
       )}
     />
   );
@@ -187,7 +187,7 @@ export function AvatarBadge({
             // child (a check, crown, …) renders as a round size-4 dot instead.
             "right-0 bottom-0 min-h-4 min-w-4 translate-x-1/4 translate-y-1/4 rounded-full px-1 text-[10px] leading-none font-semibold whitespace-nowrap uppercase has-[>svg:only-child]:size-4 has-[>svg:only-child]:px-0 [&_svg]:size-2.5 [&_svg]:shrink-0"
           : "right-0 bottom-0 size-2.5 rounded-full",
-        className
+        className,
       )}
       {...props}
     >

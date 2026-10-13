@@ -37,7 +37,7 @@ export function Switch({
       disabled={disabled}
       className={cn(
         "border-input bg-muted focus-visible:ring-ring focus-visible:ring-offset-background data-[state=checked]:bg-primary inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none",
-        className
+        className,
       )}
       onClick={(event) => {
         onClick?.(event);
@@ -59,7 +59,7 @@ export function Switch({
         aria-hidden="true"
         className={cn(
           "bg-background pointer-events-none block size-4 rounded-full transition-transform motion-reduce:transition-none",
-          isChecked ? "translate-x-4" : "translate-x-0.5"
+          isChecked ? "translate-x-4" : "translate-x-0.5",
         )}
       />
     </button>

@@ -31,7 +31,7 @@ export function ScrollArea({
         "relative min-h-0 min-w-0 overscroll-contain focus-visible:outline-none",
         overflowClass[orientation],
         scrollbarClass,
-        className
+        className,
       )}
       {...props}
     >

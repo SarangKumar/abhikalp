@@ -60,7 +60,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       className={cn(
         "text-muted-foreground h-10 px-3 text-left align-middle font-medium",
-        className
+        className,
       )}
       {...props}
     />

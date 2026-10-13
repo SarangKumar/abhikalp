@@ -27,12 +27,12 @@ type HoverCardContextValue = {
 };
 
 const HoverCardContext = React.createContext<HoverCardContextValue | null>(
-  null
+  null,
 );
 
 function assignRef(
   ref: React.Ref<HTMLElement> | undefined,
-  node: HTMLElement | null
+  node: HTMLElement | null,
 ) {
   if (typeof ref === "function") {
     ref(node);
@@ -85,7 +85,7 @@ export function HoverCard({
 
       onOpenChange?.(next);
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   const cancelTimers = useCallback(() => {
@@ -207,7 +207,7 @@ export function HoverCardContent({
     useHoverCard();
   const contentRef = useRef<HTMLDivElement>(null);
   const [point, setPoint] = useState<{ top: number; left: number } | null>(
-    null
+    null,
   );
 
   useLayoutEffect(() => {
@@ -259,11 +259,11 @@ export function HoverCardContent({
 
       left = Math.min(
         Math.max(8, left),
-        Math.max(8, window.innerWidth - content.width - 8)
+        Math.max(8, window.innerWidth - content.width - 8),
       );
       top = Math.min(
         Math.max(8, top),
-        Math.max(8, window.innerHeight - content.height - 8)
+        Math.max(8, window.innerHeight - content.height - 8),
       );
       setPoint({ top, left });
     }
@@ -338,13 +338,13 @@ export function HoverCardContent({
       }}
       className={cn(
         "border-border bg-popover text-popover-foreground z-50 w-72 max-w-[calc(100vw-1rem)] rounded-md border p-4 text-sm shadow-md",
-        className
+        className,
       )}
       onMouseEnter={cancelTimers}
       onMouseLeave={scheduleClose}
     >
       {children}
     </div>,
-    document.body
+    document.body,
   );
 }

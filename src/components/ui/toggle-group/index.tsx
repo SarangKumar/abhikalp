@@ -115,7 +115,7 @@ export function ToggleGroup({
             (orientation === "horizontal"
               ? "[&>[data-slot=toggle-group-item]:not(:first-child)]:-ml-px"
               : "[&>[data-slot=toggle-group-item]:not(:first-child)]:-mt-px"),
-          className
+          className,
         )}
         onKeyDown={(event) => {
           onKeyDown?.(event);
@@ -135,11 +135,11 @@ export function ToggleGroup({
 
           const items = [
             ...event.currentTarget.querySelectorAll<HTMLButtonElement>(
-              "[data-slot=toggle-group-item]:not(:disabled)"
+              "[data-slot=toggle-group-item]:not(:disabled)",
             ),
           ];
           const index = items.indexOf(
-            document.activeElement as HTMLButtonElement
+            document.activeElement as HTMLButtonElement,
           );
 
           if (items.length === 0 || index === -1) {
@@ -198,7 +198,7 @@ export function ToggleGroupItem({
         toggleVariants({ variant: group.variant, size: group.size }),
         // Raise the focused/pressed item so its ring and border sit above neighbors.
         "focus-visible:z-10",
-        className
+        className,
       )}
       onClick={(event) => {
         onClick?.(event);

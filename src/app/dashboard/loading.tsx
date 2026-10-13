@@ -1,12 +1,10 @@
-import DashboardSidebar from "@/components/dashboad/sidebar/dashboard-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 
 const DashboardLoading = () => {
   return (
     <div className="flex">
-      <DashboardSidebar className="border-t" />
-      <main className="flex-1">
+      <div className="flex-1">
         <div className="h-dvh w-full">
           <header className="bg-background text-muted-foreground sticky top-0 flex h-[49px] items-center justify-between gap-x-2 border-b px-6 py-4 text-xs">
             <Skeleton className="h-6 w-28 rounded" />
@@ -19,7 +17,7 @@ const DashboardLoading = () => {
             <SkeletonProjectCard />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

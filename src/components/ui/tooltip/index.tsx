@@ -236,7 +236,7 @@ export function Tooltip({
               }}
               className={cn(
                 "bg-foreground text-background vinyaas-tooltip-in pointer-events-none z-50 max-w-xs rounded-md px-2 py-1 text-sm",
-                className
+                className,
               )}
             >
               {content}
@@ -252,12 +252,12 @@ export function Tooltip({
                   (point?.side ?? side) === "left" &&
                     "border-l-foreground right-0 translate-x-full -translate-y-1/2 border-r-0 border-y-transparent",
                   (point?.side ?? side) === "right" &&
-                    "border-r-foreground left-0 -translate-x-full -translate-y-1/2 border-l-0 border-y-transparent"
+                    "border-r-foreground left-0 -translate-x-full -translate-y-1/2 border-l-0 border-y-transparent",
                 )}
                 style={arrowStyle(point?.side ?? side, point?.arrow)}
               />
             </span>,
-            document.body
+            document.body,
           )
         : null}
     </span>

@@ -142,6 +142,17 @@
         "src/components/ui/alert-dialog/index.tsx"
       ],
       "installedAt": "2026-10-13"
+    },
+    "drawer": {
+      "files": [
+        "src/components/ui/drawer/drawer.css",
+        "src/components/ui/drawer/index.tsx"
+      ],
+      "installedAt": "2026-10-13"
+    },
+    "sidebar": {
+      "files": ["src/components/ui/sidebar/index.tsx"],
+      "installedAt": "2026-10-13"
     }
   }
 }

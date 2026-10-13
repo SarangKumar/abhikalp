@@ -27,7 +27,7 @@ export const toggleVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export type ToggleProps = Omit<

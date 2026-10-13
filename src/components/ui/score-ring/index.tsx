@@ -84,7 +84,7 @@ export function ScoreRing({
       className={cn(
         "relative inline-flex shrink-0 items-center justify-center",
         box,
-        className
+        className,
       )}
     >
       <svg
@@ -119,7 +119,7 @@ export function ScoreRing({
         <span
           className={cn(
             "text-foreground absolute inset-0 flex items-center justify-center leading-none font-semibold tabular-nums",
-            text
+            text,
           )}
         >
           {children ?? Math.round(score)}
