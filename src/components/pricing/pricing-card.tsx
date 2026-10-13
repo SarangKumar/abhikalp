@@ -1,102 +1,81 @@
-import { cn } from "@/lib/utils";
-import { GeistMono } from "geist/font/mono";
-import React from "react";
-import { buttonVariants } from "../ui/button";
-import Link from "next/link";
-import { pricingPlans } from "@/constants";
 import { Check } from "lucide-react";
-import { getServerSession } from "next-auth";
+
+import { Badge } from "@/components/ui/badge";
+import type { SUBSCRIPTION_TIER } from "@/config/subscription";
+import { cn } from "@/lib/utils";
+
+import { CheckoutButton } from "./checkout-button";
 
 export interface PricingCardProps {
+  tier: SUBSCRIPTION_TIER;
   name: string;
   description: string;
   price: number;
-  features: {
-    title: string;
-    description?: string;
-  }[];
+  features: { title: string; description?: string }[];
   isPopular?: boolean;
-  link: string;
   footerText?: string;
   pricingHeader?: string;
 }
 
-const PricingCard = async ({
+const PricingCard = ({
+  tier,
   price,
   features,
   name,
   description,
   footerText,
   pricingHeader,
-  link,
   isPopular,
-}: PricingCardProps) => {
-  const session = await getServerSession();
-  const isSignedIn = !!session?.user;
-
+  isSignedIn,
+  currentTier,
+}: PricingCardProps & {
+  isSignedIn: boolean;
+  currentTier?: SUBSCRIPTION_TIER;
+}) => {
   return (
     <div
       className={cn(
-        "mx-auto flex max-w-md flex-col gap-y-2 rounded-lg border bg-secondary/50 px-6 pb-8 pt-4 md:px-8",
-        isPopular && "border-2 border-primary"
+        "bg-card mx-auto flex w-full max-w-md flex-col gap-y-2 rounded-xl border px-6 pt-4 pb-8 md:px-8",
+        isPopular && "border-primary/60 shadow-[0_0_40px_var(--glow)]"
       )}
     >
-      <h2
-        className={cn(
-          GeistMono.className,
-          isPopular && "inline-flex items-center",
-          "text-xl font-bold uppercase"
-        )}
-      >
+      <h2 className="inline-flex items-center gap-2 font-mono text-xl font-bold uppercase">
         {name}
-        {isPopular && (
-          <span
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "my-2 ml-2 inline-flex border-none px-2 py-0.5 font-sans text-xs"
-            )}
-          >
-            Most Popular
-          </span>
-        )}
+        {isPopular && <Badge className="font-sans">Most Popular</Badge>}
       </h2>
-      <p className="text-sm font-medium text-secondary-foreground">
-        {description}
-      </p>
-      <a
-        href={isSignedIn ? link : "/"}
-        className={cn(buttonVariants({ size: "lg" }))}
-      >
-        Get Started
-      </a>
-      <p className="my-2 text-xxs text-secondary-foreground">
-        <span className={cn(GeistMono.className, "text-3xl text-foreground")}>
-          ₹{price}
-        </span>{" "}
-        / month
+      <p className="text-muted-foreground text-sm font-medium">{description}</p>
+      <CheckoutButton
+        tier={tier}
+        isSignedIn={isSignedIn}
+        currentTier={currentTier}
+        size="lg"
+        variant={isPopular ? "default" : "secondary"}
+        className="mt-2 w-full"
+      />
+      <p className="text-muted-foreground text-xxs my-2">
+        <span className="text-foreground font-mono text-3xl">₹{price}</span> /
+        month
       </p>
 
-      <div className="border-t py-6 text-secondary-foreground">
+      <div className="text-muted-foreground border-t py-6">
         <p className="text-xxs">{pricingHeader}</p>
-
         <div className="space-y-4 py-4">
           {features.map(({ title, description }) => (
             <div className="flex items-start gap-x-2" key={title}>
-              <Check size={16} className="stroke-primary stroke-[2]" />
+              <Check
+                size={16}
+                className="stroke-primary mt-0.5 shrink-0 stroke-2"
+              />
               <div className="flex flex-1 flex-col">
-                <p className="text-xxs text-foreground">{title}</p>
-                <p className="text-xxs text-secondary-foreground">
-                  {description}
-                </p>
+                <p className="text-foreground text-xxs">{title}</p>
+                <p className="text-muted-foreground text-xxs">{description}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <p className="text-xs font-medium text-secondary-foreground">
-        {footerText}
-      </p>
+      <p className="text-muted-foreground text-xs font-medium">{footerText}</p>
     </div>
   );
 };

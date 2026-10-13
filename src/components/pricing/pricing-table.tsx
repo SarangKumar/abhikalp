@@ -1,31 +1,23 @@
-import { pricingFeatures, pricingPlans } from "@/constants";
-import React from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { CircleCheck, CircleMinus, Info } from "lucide-react";
-import { PricingCardProps } from "./pricing-card";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "../ui/button";
-import { GeistMono } from "geist/font/mono";
-import { getServerSession } from "next-auth";
-import { SUBSCRIPTION_TIER } from "@/config/subscription";
 
-export const PricingTablePlanLg = () => {
+import { Tooltip } from "@/components/ui/tooltip";
+import type { SUBSCRIPTION_TIER } from "@/config/subscription";
+import { pricingFeatures, pricingPlans } from "@/constants";
+import { cn } from "@/lib/utils";
+
+import { CheckoutButton } from "./checkout-button";
+import type { PricingCardProps } from "./pricing-card";
+
+type AuthProps = { isSignedIn: boolean; currentTier?: SUBSCRIPTION_TIER };
+
+export const PricingTablePlanLg = (auth: AuthProps) => {
   return (
-    <table className="mb-16 mt-24 hidden table-auto lg:block">
-      <thead className="">
+    <table className="mt-24 mb-16 hidden w-full table-auto lg:table">
+      <thead>
         <tr className="relative">
-          <th className="invisible"></th>
+          <th className="invisible" />
           {pricingPlans.map((plan) => (
-            <TableHead
-              key={plan.name}
-              {...plan}
-              className="sticky left-0 top-0"
-            />
+            <TableHead key={plan.name} {...plan} {...auth} />
           ))}
         </tr>
       </thead>
@@ -56,55 +48,55 @@ export const PricingTablePlanLg = () => {
   );
 };
 
-export const PricingTablePlanSm = () => {
+export const PricingTablePlanSm = (auth: AuthProps) => {
   return (
-    <div className="mx-auto mb-16 mt-24 max-w-screen-md space-y-12 lg:hidden">
-      <PricingTablePlansCol plan="FREE" />
-      <PricingTablePlansCol plan="GOLD" />
-      <PricingTablePlansCol plan="PLATINUM" />
+    <div className="mx-auto mt-24 mb-16 max-w-3xl space-y-12 lg:hidden">
+      {(["FREE", "GOLD", "PLATINUM"] as const).map((plan) => (
+        <PricingTablePlansCol key={plan} plan={plan} {...auth} />
+      ))}
     </div>
   );
 };
-export const PricingTablePlansCol = ({ plan }: { plan: SUBSCRIPTION_TIER }) => {
-  const selectedPlan = pricingPlans.find(
-    (p) => p.name.toLowerCase() === plan.toLowerCase()
-  );
 
-  if (selectedPlan) {
-    return (
-      <table className="">
-        <thead>
-          <tr className="relative">
-            <TableHead
-              {...selectedPlan}
-              colSpan={2}
-              className="sticky top-0 w-full"
+export const PricingTablePlansCol = ({
+  plan,
+  ...auth
+}: { plan: SUBSCRIPTION_TIER } & AuthProps) => {
+  const selectedPlan = pricingPlans.find((p) => p.tier === plan);
+  if (!selectedPlan) return <>Plan not found</>;
+
+  return (
+    <table className="w-full">
+      <thead>
+        <tr className="relative">
+          <TableHead
+            {...selectedPlan}
+            {...auth}
+            colSpan={2}
+            className="w-full"
+          />
+        </tr>
+      </thead>
+      <tbody>
+        {pricingFeatures.map((feature, index) => (
+          <tr key={index} className="border-t">
+            <TableTd
+              head
+              title={feature.feature.title}
+              description={feature.feature.description}
+            />
+            <TableTd
+              title={feature[plan].title}
+              description={feature[plan].description}
             />
           </tr>
-        </thead>
-        <tbody>
-          {pricingFeatures.map((feature, index) => (
-            <tr key={index} className="border-t">
-              <TableTd
-                head
-                title={feature.feature.title}
-                description={feature.feature.description}
-              />
-              <TableTd
-                title={feature[plan].title}
-                description={feature[plan].description}
-              />
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  } else {
-    return <>Plan not found</>;
-  }
+        ))}
+      </tbody>
+    </table>
+  );
 };
 
-const TableRowTooTip = ({
+const TableRowToolTip = ({
   title,
   description,
 }: {
@@ -112,56 +104,51 @@ const TableRowTooTip = ({
   description?: string;
 }) => {
   return (
-    <td className="px-4 lg:whitespace-nowrap lg:pr-12">
-      <span className="xs:text-sm text-xs">{title}</span>
+    <td className="px-4 lg:pr-12 lg:whitespace-nowrap">
+      <span className="text-xs sm:text-sm">{title}</span>
       {description && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Info
-              className="ml-2 inline shrink-0 text-secondary-foreground"
-              size={14}
-            />
-          </TooltipTrigger>
-          <TooltipContent className="">
-            <p className="">{title}</p>
-          </TooltipContent>
+        <Tooltip
+          content={<p className="max-w-64 whitespace-normal">{description}</p>}
+        >
+          <span tabIndex={0} className="ml-2 inline-flex align-middle">
+            <Info className="text-muted-foreground shrink-0" size={14} />
+            <span className="sr-only">{description}</span>
+          </span>
         </Tooltip>
       )}
     </td>
   );
 };
 
-export const TableHead = async ({
+export const TableHead = ({
+  tier,
   name,
   price,
-  isPopular,
   colSpan,
-  link,
   className,
-}: PricingCardProps & { colSpan?: number; className?: string }) => {
-  const session = await getServerSession();
-  const isSignedIn = !!session?.user;
-
+  isSignedIn,
+  currentTier,
+}: PricingCardProps & AuthProps & { colSpan?: number; className?: string }) => {
   return (
     <th
       colSpan={colSpan}
-      className={cn("sticky top-0 gap-y-1 p-4 text-left", className)}
+      className={cn(
+        "bg-background sticky top-16 gap-y-1 p-4 text-left",
+        className
+      )}
     >
-      <h3
-        className={cn(GeistMono.className, "flex flex-row items-center gap-2")}
-      >
+      <h3 className="flex flex-row items-center gap-2 font-mono">
         <span className="text-xl font-semibold uppercase">{name}</span>
-        <p className="my-2 text-sm text-secondary-foreground">
-          <span className={cn(GeistMono.className, "text-lg")}>₹{price}</span>/
-          month
-        </p>
+        <span className="text-muted-foreground my-2 text-sm font-normal">
+          <span className="text-foreground text-lg">₹{price}</span>/ month
+        </span>
       </h3>
-      <Link
-        href={isSignedIn ? link : "/"}
-        className={cn(buttonVariants({ size: "lg" }), "w-full py-1.5")}
-      >
-        Get Started
-      </Link>
+      <CheckoutButton
+        tier={tier}
+        isSignedIn={isSignedIn}
+        currentTier={currentTier}
+        className="w-full"
+      />
     </th>
   );
 };
@@ -175,35 +162,31 @@ export const TableTd = ({
   description: string;
   head?: boolean;
 }) => {
-  if (head) {
-    return <TableRowTooTip title={title} description={description} />;
-  } else if (title === "-") {
+  if (head) return <TableRowToolTip title={title} description={description} />;
+  if (title === "-") {
     return (
       <td className="p-4">
-        <CircleMinus
-          className="shrink-0 text-secondary-foreground/80"
-          size={16}
-        />
-      </td>
-    );
-  } else if (title.toLowerCase() === "yes") {
-    return (
-      <td className="p-4">
-        <CircleCheck className="shrink-0 text-primary" size={16} />
-      </td>
-    );
-  } else {
-    return (
-      <td className="p-4">
-        <strong className="block text-xs font-medium text-foreground md:text-sm">
-          {title}
-        </strong>
-        {description && (
-          <span className="text-xs leading-[4px] text-secondary-foreground md:text-sm">
-            {description}
-          </span>
-        )}
+        <CircleMinus className="text-muted-foreground/80 shrink-0" size={16} />
       </td>
     );
   }
+  if (title.toLowerCase() === "yes") {
+    return (
+      <td className="p-4">
+        <CircleCheck className="text-primary shrink-0" size={16} />
+      </td>
+    );
+  }
+  return (
+    <td className="p-4">
+      <strong className="text-foreground block text-xs font-medium md:text-sm">
+        {title}
+      </strong>
+      {description && (
+        <span className="text-muted-foreground text-xs md:text-sm">
+          {description}
+        </span>
+      )}
+    </td>
+  );
 };
