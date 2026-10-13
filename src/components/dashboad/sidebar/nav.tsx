@@ -9,6 +9,7 @@ import {
   Globe,
   House,
   LayoutList,
+  PenTool,
   Settings,
 } from "lucide-react";
 
@@ -52,6 +53,7 @@ export function projectNav(projectId: string): NavSection[] {
         { title: "Home", href: base, icon: <House />, exact: true },
         { title: "Todo", href: `${base}/todo`, icon: <LayoutList /> },
         { title: "Docs", href: `${base}/documentation`, icon: <FilePlus2 /> },
+        { title: "Playground", href: `${base}/playground`, icon: <PenTool /> },
       ],
     },
     {
