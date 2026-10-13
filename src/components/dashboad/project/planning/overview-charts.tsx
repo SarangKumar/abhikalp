@@ -102,9 +102,20 @@ export function BreakdownChart({
         />
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend content={<ChartLegendContent />} />
-        <Bar dataKey="todo" stackId="a" fill="var(--color-todo)" />
-        <Bar dataKey="inProgress" stackId="a" fill="var(--color-inProgress)" />
         <Bar
+          dataKey="todo"
+          stackId="a"
+          fill="var(--color-todo)"
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="inProgress"
+          stackId="a"
+          fill="var(--color-inProgress)"
+          isAnimationActive={false}
+        />
+        <Bar
+          isAnimationActive={false}
           dataKey="done"
           stackId="a"
           fill="var(--color-done)"
