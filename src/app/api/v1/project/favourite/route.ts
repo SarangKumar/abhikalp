@@ -1,13 +1,30 @@
-import { ServerResponse } from "@/app/api/utils";
-import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  const { projectId } = await req.json();
+import { getUserBySession, ServerResponse } from "@/app/api/utils";
+import prisma from "@/lib/prisma";
 
-  const projectExists = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
+export async function POST(req: NextRequest) {
+  const user = await getUserBySession();
+  if (!user) {
+    return NextResponse.json(
+      ServerResponse(
+        null,
+        false,
+        "UNAUTHORIZED",
+        { title: "Please sign in", description: "" },
+        401
+      ),
+      { status: 401 }
+    );
+  }
+
+  const { projectId } = await req.json();
+  const projectExists =
+    typeof projectId === "string"
+      ? await prisma.project.findFirst({
+          where: { id: projectId, ownerId: user.id },
+        })
+      : null;
 
   if (!projectExists) {
     return NextResponse.json(
@@ -20,13 +37,14 @@ export async function POST(req: NextRequest) {
           description:
             "The project you are trying to mark as favourite does not exist",
         },
-        400
-      )
+        404
+      ),
+      { status: 404 }
     );
   }
 
   const project = await prisma.project.update({
-    where: { id: projectId },
+    where: { id: projectExists.id },
     data: { isFavourite: !projectExists.isFavourite },
   });
 

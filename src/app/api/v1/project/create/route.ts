@@ -1,18 +1,62 @@
-import { ServerResponse } from "@/app/api/utils";
-import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getUserBySession, ServerResponse } from "@/app/api/utils";
+import { getSubscriptionConfig } from "@/config/subscription";
+import prisma from "@/lib/prisma";
+import { createProjectSchema } from "@/types/schema";
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const {
-    isPrivate,
-    userId,
-    isFavourite,
-    title,
-    description,
-    githubUrl,
-    deployedUrl,
-  } = body;
+  const user = await getUserBySession({ project: true });
+  if (!user) {
+    return NextResponse.json(
+      ServerResponse(
+        null,
+        false,
+        "UNAUTHORIZED",
+        { title: "Please sign in", description: "" },
+        401
+      ),
+      { status: 401 }
+    );
+  }
+
+  const parsed = createProjectSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      ServerResponse(
+        null,
+        false,
+        "INVALID",
+        {
+          title: parsed.error.issues[0]?.message ?? "Invalid project",
+          description: "",
+        },
+        400
+      ),
+      { status: 400 }
+    );
+  }
+
+  if (
+    user.projects.length >= getSubscriptionConfig(user.subscription).maxProjects
+  ) {
+    return NextResponse.json(
+      ServerResponse(
+        null,
+        false,
+        "LIMIT",
+        {
+          title: "Project Limit Reached",
+          description: "Upgrade your subscription to create more projects.",
+        },
+        403
+      ),
+      { status: 403 }
+    );
+  }
+
+  const { title, description, isFavourite, isPrivate, githubUrl, deployedUrl } =
+    parsed.data;
 
   try {
     const project = await prisma.project.create({
@@ -21,40 +65,26 @@ export async function POST(req: NextRequest) {
         description,
         isFavourite,
         isPrivate,
-        githubUrl,
-        deployedUrl,
-        ownerId: userId,
+        githubUrl: githubUrl || null,
+        deployedUrl: deployedUrl || null,
+        ownerId: user.id,
       },
     });
-
-    if (!project) {
-      return NextResponse.json(
-        ServerResponse(
-          null,
-          false,
-          "PROJECT CREATION FAILED",
-          {
-            title: "Project Creation Failed",
-            description: "",
-          },
-          400
-        )
-      );
-    } else {
-      return NextResponse.json(
-        ServerResponse(
-          project,
-          true,
-          false,
-          {
-            title: "Project Created Successfully",
-            description: "Project Created Successfully",
-          },
-          201
-        )
-      );
-    }
+    return NextResponse.json(
+      ServerResponse(
+        project,
+        true,
+        false,
+        {
+          title: "Project Created Successfully",
+          description: "Project Created Successfully",
+        },
+        201
+      ),
+      { status: 201 }
+    );
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       ServerResponse(
         null,
@@ -66,7 +96,8 @@ export async function POST(req: NextRequest) {
             "Something went wrong with the server, please try again later.",
         },
         500
-      )
+      ),
+      { status: 500 }
     );
   }
 }

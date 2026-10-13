@@ -24,11 +24,20 @@ model User {
   id           String           @id @default(auto()) @map("_id") @db.ObjectId
   email        String           @unique
   name         String
-  password     String
+  /// Null for OAuth-only accounts.
+  password     String?
   image        String?
   projects     Project[]
   subscription SubscriptionTier @default(FREE)
   isVerified   Boolean          @default(false)
+
+  // Stripe billing state, written only by the webhook (src/lib/billing.ts).
+  stripeCustomerId       String?
+  stripeSubscriptionId   String?
+  stripePriceId          String?
+  stripeStatus           String?
+  stripeCurrentPeriodEnd DateTime?
+  stripeCancelAtPeriodEnd Boolean @default(false)
 
   forgotPasswordToken       String?
   forgotPasswordTokenExpiry DateTime?
@@ -37,6 +46,9 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
 }
 
 model Project {

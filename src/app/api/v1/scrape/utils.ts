@@ -1,15 +1,9 @@
-import cheerio from "cheerio";
+import { load } from "cheerio";
 
 const cleanHtml = (html: string): string => {
-  const $ = cheerio.load(html);
-
-  // Remove unwanted tags
+  const $ = load(html);
   $("script, style, iframe, noscript, meta, link").remove();
-
-  // Extract and clean meaningful text
-  const cleanedText = $("body").text().replace(/\s+/g, " ").trim();
-
-  return cleanedText;
+  return $("body").text().replace(/\s+/g, " ").trim();
 };
 
 export default cleanHtml;
