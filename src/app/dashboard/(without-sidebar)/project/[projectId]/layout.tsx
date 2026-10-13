@@ -6,6 +6,7 @@ import ProjectHeader from "@/components/dashboad/project/project-header";
 import ProjectSidebar from "@/components/dashboad/project/project-sidebar";
 import { siteConfig } from "@/config/site";
 import { getProjectAccess } from "@/lib/access";
+import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: {
@@ -23,6 +24,7 @@ const DashboardProjectsLayout = async ({
   params: Promise<{ projectId: string }>;
 }>) => {
   const { projectId } = await params;
+  await requireUser(`/dashboard/project/${projectId}`);
   const access = await getProjectAccess(projectId);
   if (!access) notFound();
 

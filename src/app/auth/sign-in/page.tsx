@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AuthError } from "@/components/auth/auth-error";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import SignInForm from "@/components/auth/signin-form";
 import { buttonVariants } from "@/components/ui/button";
@@ -9,14 +10,27 @@ import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default function SignInPage() {
+const safeCallback = (value?: string) =>
+  value && value.startsWith("/") && !value.startsWith("//")
+    ? value
+    : "/dashboard";
+
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
+}) {
+  const { error, callbackUrl } = await searchParams;
+  const target = safeCallback(callbackUrl);
+
   return (
     <div className="flex flex-1 flex-col gap-y-4">
       <main className="mx-auto w-full flex-1 px-6 sm:max-w-[640px]">
         <h1 className="display my-2 text-2xl lg:text-3xl">Welcome back</h1>
         <p className="text-muted-foreground text-sm">Sign in to your account</p>
 
-        <OAuthButtons />
+        <AuthError error={error} />
+        <OAuthButtons callbackUrl={target} />
         <Suspense>
           <SignInForm />
         </Suspense>

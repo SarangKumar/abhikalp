@@ -23,7 +23,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (token && isAuth) {
+  // Let users with a stale or failed session reach the auth pages (error=…).
+  if (token && isAuth && !request.nextUrl.searchParams.has("error")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

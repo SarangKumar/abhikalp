@@ -20,7 +20,7 @@ import AcceptInviteButton from "@/components/dashboad/accept-invite-button";
 import { getPendingInvites } from "@/lib/invites";
 import { prisma } from "@/lib/prisma";
 
-import { getUserBySession } from "../api/utils";
+import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "All Projects | Dashboard",
@@ -34,9 +34,8 @@ const DashboardPage = async ({
 }) => {
   const [{ query }, user] = await Promise.all([
     searchParams,
-    getUserBySession({ project: true }),
+    requireUser("/dashboard", { project: true }),
   ]);
-  if (!user) return null;
 
   const [memberships, invites] = await Promise.all([
     prisma.projectMember.findMany({

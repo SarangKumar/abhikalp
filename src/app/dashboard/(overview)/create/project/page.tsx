@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
-import { getUserBySession } from "@/app/api/utils";
+import { requireUser } from "@/lib/session";
 import DashboardNavbar from "@/components/dashboad/dashboard-navbar";
 import { CreateProject } from "@/components/dashboad/project/create-project";
 import { Alert } from "@/components/ui/alert";
@@ -15,8 +15,9 @@ export const metadata: Metadata = {
 };
 
 const CreateProjectPage = async () => {
-  const user = await getUserBySession({ project: true });
-  if (!user) return null;
+  const user = await requireUser("/dashboard/create/project", {
+    project: true,
+  });
 
   const subscription = getSubscriptionConfig(user.subscription);
   const isProjectLimitReached =

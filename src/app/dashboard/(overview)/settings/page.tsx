@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
-import { getUserBySession } from "@/app/api/utils";
+import { requireUser } from "@/lib/session";
 import DashboardNavbar from "@/components/dashboad/dashboard-navbar";
 import { ManageBillingButton } from "@/components/pricing/checkout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -33,9 +33,8 @@ const SettingsPage = async ({
 }) => {
   const [{ checkout }, user] = await Promise.all([
     searchParams,
-    getUserBySession({ project: true }),
+    requireUser("/dashboard/settings", { project: true }),
   ]);
-  if (!user) return null;
 
   const plan = getSubscriptionConfig(user.subscription);
   const renews = user.stripeCurrentPeriodEnd?.toLocaleDateString("en-IN", {

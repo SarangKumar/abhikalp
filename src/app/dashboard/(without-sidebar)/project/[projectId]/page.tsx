@@ -3,11 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import TaskStatusCard from "@/components/dashboad/project/task/task-status-card";
-import Avatar from "@/components/navbar/avatar";
+import MemberAvatars from "@/components/dashboad/project/member-avatars";
 import { buttonVariants } from "@/components/ui/button";
 import { ScoreRing } from "@/components/ui/score-ring";
-import { Tooltip } from "@/components/ui/tooltip";
-import { ROLE_LABEL } from "@/config/roles";
 import { can, getProjectAccess } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
 import { cn, formatDate } from "@/lib/utils";
@@ -107,25 +105,14 @@ const ProjectPage = async ({ params }: Props) => {
           )}
         </h1>
         <div className="flex items-center gap-x-4">
-          <div className="flex -space-x-2">
-            {people.slice(0, 5).map((p) => (
-              <Tooltip key={p.id} content={`${p.name} · ${ROLE_LABEL[p.role]}`}>
-                <span className="inline-flex">
-                  <Avatar
-                    name={p.name}
-                    image={p.image || ""}
-                    size="base"
-                    className="ring-background ring-2"
-                  />
-                </span>
-              </Tooltip>
-            ))}
-            {people.length > 5 && (
-              <span className="bg-secondary ring-background flex size-8 items-center justify-center rounded-full text-xs ring-2">
-                +{people.length - 5}
-              </span>
-            )}
-          </div>
+          <MemberAvatars
+            people={people.map((p) => ({
+              id: p.id,
+              name: p.name,
+              image: p.image,
+              role: p.role,
+            }))}
+          />
           <Link href={href("/settings#share")} className={buttonVariants()}>
             {can.manageMembers(role) ? "Invite Collaborators" : "View team"}
           </Link>

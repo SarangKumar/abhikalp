@@ -1,3 +1,5 @@
+"use client";
+
 import { CircleCheck, CircleMinus, Info } from "lucide-react";
 
 import { Tooltip } from "@/components/ui/tooltip";

@@ -13,7 +13,19 @@ import SubmitButton from "./submit-button";
 
 const SignInForm = () => {
   const router = useRouter();
-  const callbackUrl = useSearchParams().get("callbackUrl") || "/dashboard";
+  const raw = useSearchParams().get("callbackUrl") || "/dashboard";
+  // Only allow same-origin paths (next-auth may pass an absolute URL).
+  const callbackUrl = () => {
+    if (raw.startsWith("/") && !raw.startsWith("//")) return raw;
+    try {
+      const url = new URL(raw);
+      return url.origin === window.location.origin
+        ? url.pathname + url.search
+        : "/dashboard";
+    } catch {
+      return "/dashboard";
+    }
+  };
   const [loading, setLoading] = useState(false);
   const [userdata, setUserdata] = useState({ email: "", password: "" });
 
@@ -34,10 +46,15 @@ const SignInForm = () => {
       });
       if (response && !response.error) {
         notify.success("Login successful");
-        router.push(callbackUrl.startsWith("/") ? callbackUrl : "/dashboard");
+        router.push(callbackUrl());
         router.refresh();
       } else {
-        notify.error("Login failed", "Check your email and password.");
+        notify.error(
+          "Login failed",
+          response?.error === "CredentialsSignin"
+            ? "Incorrect email or password."
+            : "Sign-in is unavailable right now. Please try again."
+        );
       }
     } catch (error) {
       console.error(error);
