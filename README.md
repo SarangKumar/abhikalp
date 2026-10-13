@@ -27,11 +27,11 @@ npm run dev
 
 ## Features
 
-Projects, kanban tasks (priority, estimate, due date), project markdown docs, web-scrape references, an AI assistant, an npm package finder, collaborators with roles (Owner, Admin, Collaborator, Viewer) and email-bound invite links, plus Stripe billing. See `FEATURES.md` and `/docs`.
+Projects, kanban tasks (priority, estimate, due date), project markdown docs, web-scrape references, an npm package finder, collaborators with roles (Owner, Admin, Collaborator, Viewer) and email-bound invite links, plus Stripe billing. See `FEATURES.md` and `/docs`.
 
-## AI assistant (optional)
+## AI assistant (coming soon)
 
-Set `OPENAI_API_KEY` (and optionally `OPENAI_BASE_URL` for any OpenAI-compatible provider, and `AI_MODEL`). Without it, the AI page shows a "not configured" state. Models per plan live in `src/config/subscription.ts`.
+The assistant is disabled via `features.aiAssistant` in `src/config/features.ts` (its nav entry is hidden and the page shows "coming soon"). No API key is required. To enable it later, set the flag to `true` and provide `OPENAI_API_KEY` (optionally `OPENAI_BASE_URL` and `AI_MODEL`).
 
 ## Icons
 

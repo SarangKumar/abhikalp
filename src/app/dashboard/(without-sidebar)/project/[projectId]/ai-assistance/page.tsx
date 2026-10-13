@@ -1,4 +1,4 @@
-import { KeyRound } from "lucide-react";
+import { KeyRound, Sparkles } from "lucide-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -9,6 +9,7 @@ import {
   EmptyIcon,
   EmptyTitle,
 } from "@/components/ui/empty-state";
+import { features } from "@/config/features";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { siteConfig } from "@/config/site";
 import { getProjectAccess } from "@/lib/access";
@@ -26,6 +27,21 @@ export default async function AiAssistancePage({
 }) {
   const access = await getProjectAccess((await params).projectId);
   if (!access) notFound();
+
+  if (!features.aiAssistant) {
+    return (
+      <Empty className="m-4 rounded-xl border border-dashed py-20 md:m-6">
+        <EmptyIcon>
+          <Sparkles />
+        </EmptyIcon>
+        <EmptyTitle>AI assistance is coming soon</EmptyTitle>
+        <EmptyDescription>
+          A project-aware assistant that knows your tasks, docs and references
+          is on the way.
+        </EmptyDescription>
+      </Empty>
+    );
+  }
 
   if (!isAiConfigured()) {
     return (

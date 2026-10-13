@@ -80,11 +80,6 @@ const API = [
     "Change role / remove or leave",
   ],
   ["POST", "/api/v1/invites/accept", "Accept an invite token"],
-  [
-    "POST",
-    "/api/v1/projects/:id/ai",
-    "Chat with the project assistant (streams text)",
-  ],
   ["GET", "/api/v1/packages?q=", "Search npm packages"],
   ["POST", "/api/v1/billing/checkout", "Start a subscription checkout"],
   ["POST", "/api/v1/billing/portal", "Open the billing portal"],
@@ -227,11 +222,11 @@ const DocumentationPage = () => {
 
             <Section id="ai" title="AI assistance">
               <p>
-                The assistant answers questions with your project&apos;s
-                description, tasks, docs and latest references as context.
-                Conversations are stored in your browser only. The model depends
-                on the project owner&apos;s plan. Self-hosters enable it by
-                setting <code>OPENAI_API_KEY</code>.
+                <Badge variant="secondary" className="mr-2">
+                  Coming soon
+                </Badge>
+                A project-aware assistant that answers questions using your
+                project&apos;s description, tasks, docs and saved references.
               </p>
             </Section>
 

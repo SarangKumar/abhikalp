@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { features } from "@/config/features";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { siteConfig } from "@/config/site";
 import { isAiConfigured, resolveModel, streamChat } from "@/lib/ai";
@@ -22,6 +23,8 @@ const schema = z.object({
 
 /** Project-aware assistant. Streams plain text. */
 export async function POST(req: Request, { params }: RouteCtx) {
+  if (!features.aiAssistant)
+    return jsonError("AI assistant is coming soon.", 404);
   if (!isAiConfigured()) {
     return jsonError(
       "AI assistant is not configured. Set OPENAI_API_KEY.",

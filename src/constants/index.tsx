@@ -9,6 +9,8 @@ import {
   Settings,
 } from "lucide-react";
 
+import { features } from "@/config/features";
+
 export const dashboardNavbarLinks = [
   {
     name: "Projects",
@@ -76,11 +78,15 @@ export const projectSidebarLinks = [
         icon: <Globe size={18} className="stroke-[1.5]" />,
         href: "/web-scrape",
       },
-      {
-        title: "AI Assistance",
-        icon: <Brain size={18} className="stroke-[1.5]" />,
-        href: "/ai-assistance",
-      },
+      ...(features.aiAssistant
+        ? [
+            {
+              title: "AI Assistance",
+              icon: <Brain size={18} className="stroke-[1.5]" />,
+              href: "/ai-assistance",
+            },
+          ]
+        : []),
       {
         title: "Package Finder",
         icon: <Box size={18} className="stroke-[1.5]" />,
