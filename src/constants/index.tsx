@@ -32,11 +32,11 @@ export const dashboardNavbarLinks = [
     links: [
       {
         title: "Guides",
-        href: "/docs/guides",
+        href: "/docs#guides",
       },
       {
         title: "API Reference",
-        href: "/docs/api",
+        href: "/docs#api",
       },
     ],
   },
