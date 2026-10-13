@@ -1,31 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getUserBySession } from "@/app/api/utils";
+import { jsonError } from "@/lib/api";
+import { ScrapeError, scrapePage } from "@/lib/scrape";
 
-import cleanHtml from "./utils";
-
+/** Preview a scrape without saving it. */
 export async function POST(req: NextRequest) {
   const user = await getUserBySession();
-  if (!user)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-
-  const { url } = await req.json();
-  let target: URL;
+  if (!user) return jsonError("Unauthorized", 401);
+  const { url } = await req.json().catch(() => ({}));
   try {
-    target = new URL(url);
-    if (!["http:", "https:"].includes(target.protocol)) throw new Error();
-  } catch {
-    return NextResponse.json(
-      { message: "A valid http(s) URL is required" },
-      { status: 400 }
-    );
+    const page = await scrapePage(url);
+    return NextResponse.json({
+      message: "Scraped data successfully",
+      data: page.content,
+      ...page,
+    });
+  } catch (error) {
+    if (error instanceof ScrapeError) return jsonError(error.message);
+    console.error("[scrape]", error);
+    return jsonError("Scrape failed", 500);
   }
-
-  const response = await fetch(target, { signal: AbortSignal.timeout(10_000) });
-  const text = cleanHtml(await response.text());
-
-  return NextResponse.json(
-    { message: "Scraped data successfully", data: text },
-    { status: 200 }
-  );
 }

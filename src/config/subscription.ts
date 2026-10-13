@@ -8,12 +8,34 @@ export interface SubscriptionConfig {
   tier: SUBSCRIPTION_TIER;
   maxProjects: number;
   chatModel: string;
+  /** Longest invite-link lifetime the plan allows, in days. */
+  maxInviteDays: number;
+  /** Collaborators (excluding owner) per project. */
+  maxMembers: number;
 }
 
 export const subscriptions: Record<SUBSCRIPTION_TIER, SubscriptionConfig> = {
-  FREE: { tier: "FREE", maxProjects: 3, chatModel: "gpt-3.5-turbo" },
-  GOLD: { tier: "GOLD", maxProjects: 10, chatModel: "gpt-3.5-turbo" },
-  PLATINUM: { tier: "PLATINUM", maxProjects: 30, chatModel: "gpt-4" },
+  FREE: {
+    tier: "FREE",
+    maxProjects: 3,
+    chatModel: "gpt-4o-mini",
+    maxInviteDays: 7,
+    maxMembers: 3,
+  },
+  GOLD: {
+    tier: "GOLD",
+    maxProjects: 10,
+    chatModel: "gpt-4o-mini",
+    maxInviteDays: 30,
+    maxMembers: 10,
+  },
+  PLATINUM: {
+    tier: "PLATINUM",
+    maxProjects: 30,
+    chatModel: "gpt-4o",
+    maxInviteDays: 90,
+    maxMembers: 50,
+  },
 };
 
 export const getSubscriptionConfig = (

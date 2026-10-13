@@ -28,16 +28,18 @@ model User {
   password     String?
   image        String?
   projects     Project[]
+  memberships  ProjectMember[]
+  invitesSent  ProjectInvite[]  @relation("InvitedBy")
   subscription SubscriptionTier @default(FREE)
   isVerified   Boolean          @default(false)
 
   // Stripe billing state, written only by the webhook (src/lib/billing.ts).
-  stripeCustomerId       String?
-  stripeSubscriptionId   String?
-  stripePriceId          String?
-  stripeStatus           String?
-  stripeCurrentPeriodEnd DateTime?
-  stripeCancelAtPeriodEnd Boolean @default(false)
+  stripeCustomerId        String?
+  stripeSubscriptionId    String?
+  stripePriceId           String?
+  stripeStatus            String?
+  stripeCurrentPeriodEnd  DateTime?
+  stripeCancelAtPeriodEnd Boolean   @default(false)
 
   forgotPasswordToken       String?
   forgotPasswordTokenExpiry DateTime?
@@ -63,10 +65,22 @@ model Project {
   ownerId String @db.ObjectId
   owner   User   @relation(fields: [ownerId], references: [id])
 
-  tasks Task[]
+  tasks      Task[]
+  members    ProjectMember[]
+  invites    ProjectInvite[]
+  references Reference[]
+
+  /// Markdown project documentation (Documentation tab).
+  docs String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 enum TaskStatus {
@@ -76,15 +90,67 @@ enum TaskStatus {
 }
 
 model Task {
-  id                         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
   title                      String
   description                String?
   status                     TaskStatus
   estimatedTimeForCompletion Int?
+  priority                   TaskPriority @default(MEDIUM)
+  dueDate                    DateTime?
 
   projectId String  @db.ObjectId
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+/// A user who can access a project they do not own.
+/// Roles: ADMIN (manage members + edit), COLLABORATOR (edit), VIEWER (read).
+/// The owner is Project.owner and is never stored here.
+model ProjectMember {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  role      Role     @default(COLLABORATOR)
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+/// Invite by email. Accepted from the dashboard (matching email) or via the
+/// shareable /invite/<token> link while it has not expired.
+model ProjectInvite {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  email       String
+  role        Role      @default(COLLABORATOR)
+  token       String    @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  projectId   String    @db.ObjectId
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedById String    @db.ObjectId
+  invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@index([projectId])
+  @@index([email])
+}
+
+/// A scraped web page saved as reference material for a project.
+model Reference {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  title     String
+  content   String
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
 }
