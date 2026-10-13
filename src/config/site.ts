@@ -13,8 +13,6 @@ const appName = process.env.NEXT_PUBLIC_APP_NAME || "Abhikalp";
 export const siteConfig = {
   name: appName,
   shortName: process.env.NEXT_PUBLIC_APP_SHORT_NAME || appName,
-  /** Letter shown in the square logo mark. */
-  logoMark: appName.trim()[0]?.toUpperCase() ?? "A",
   tagline: "Transform Your Project Workflow",
   description:
     "Abhikalp is a collaborative platform that allows users to create and manage projects. Users can sign in, create projects, share, manage it and more",
