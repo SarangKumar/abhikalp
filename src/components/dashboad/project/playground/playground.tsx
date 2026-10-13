@@ -1,6 +1,7 @@
 "use client";
 
 import "@excalidraw/excalidraw/index.css";
+import "./playground.css";
 
 import { Check, Eye, TriangleAlert } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -33,6 +34,12 @@ type Status = "idle" | "saving" | "saved" | "error";
 
 const SAVE_DELAY = 1500;
 
+/** Canvas colour matching the app background. Dark mode is derived by
+ * Excalidraw's canvas inversion (tuned in playground.css). */
+const APP_CANVAS_BG = "#ffffff";
+/** Backgrounds we may replace; anything else was chosen by the user. */
+const DEFAULT_BGS = new Set([undefined, "", "#ffffff", "#fff", "transparent"]);
+
 export default function Playground({
   projectId,
   canEdit,
@@ -45,6 +52,9 @@ export default function Playground({
   savedAt: string | null;
 }) {
   const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === "dark" ? "dark" : "light";
+  const initialBg = initialScene?.appState?.viewBackgroundColor;
+  const canvasBg = DEFAULT_BGS.has(initialBg) ? APP_CANVAS_BG : initialBg;
   const [status, setStatus] = useState<Status>(savedAt ? "saved" : "idle");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Signature of the last saved scene; primed by the first onChange (initial load).
@@ -119,8 +129,8 @@ export default function Playground({
   );
 
   return (
-    <div className="flex h-[calc(100svh-3rem)] flex-col">
-      <div className="flex h-10 items-center justify-between gap-2 border-b px-4 text-xs">
+    <div className="abh-playground bg-background flex h-[calc(100svh-3rem)] flex-col">
+      <div className="bg-background/80 flex h-10 shrink-0 items-center justify-between gap-2 border-b px-4 text-xs backdrop-blur">
         <p className="text-muted-foreground">
           Sketch ideas, flows and architecture for this project.
         </p>
@@ -145,13 +155,13 @@ export default function Playground({
       </div>
       <div className="relative min-h-0 flex-1" data-testid="playground">
         <Excalidraw
-          theme={resolvedTheme === "dark" ? "dark" : "light"}
+          theme={theme}
           viewModeEnabled={!canEdit}
           initialData={{
             elements: (initialScene?.elements ?? []) as never,
             files: (initialScene?.files ?? {}) as never,
             appState: {
-              viewBackgroundColor: initialScene?.appState?.viewBackgroundColor,
+              viewBackgroundColor: canvasBg,
             },
             scrollToContent: true,
           }}

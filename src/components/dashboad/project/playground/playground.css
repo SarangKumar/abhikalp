@@ -1,0 +1,76 @@
+/*
+ * Abhikalp theme for Excalidraw. Maps Excalidraw's CSS variables to the app
+ * tokens (globals.css) so toolbars, menus and dialogs follow the purple brand
+ * in light and dark. Scoped to .abh-playground so the extra class beats
+ * Excalidraw's own `.excalidraw` / `.excalidraw.theme--dark` rules.
+ */
+.abh-playground .excalidraw,
+.abh-playground .excalidraw.theme--dark {
+  --ui-font: var(--font-sans);
+
+  --color-primary: var(--primary);
+  --color-primary-darker: color-mix(in oklch, var(--primary) 88%, black);
+  --color-primary-darkest: color-mix(in oklch, var(--primary) 76%, black);
+  --color-primary-hover: color-mix(in oklch, var(--primary) 90%, black);
+  --color-primary-light: color-mix(
+    in oklch,
+    var(--primary) 16%,
+    var(--background)
+  );
+  --color-primary-light-darker: color-mix(
+    in oklch,
+    var(--primary) 26%,
+    var(--background)
+  );
+  --color-surface-primary-container: color-mix(
+    in oklch,
+    var(--primary) 18%,
+    var(--card)
+  );
+  --color-on-primary-container: var(--foreground);
+  --focus-highlight-color: var(--ring);
+
+  --default-bg-color: var(--background);
+  --island-bg-color: var(--popover);
+  --popup-bg-color: var(--popover);
+  --sidebar-bg-color: var(--card);
+  --color-surface-lowest: var(--background);
+  --color-surface-low: var(--card);
+  --color-surface-mid: var(--muted);
+  --color-surface-high: var(--accent);
+  --color-on-surface: var(--foreground);
+  --text-primary-color: var(--foreground);
+  --default-border-color: var(--border);
+  --sidebar-border-color: var(--border);
+
+  --input-bg-color: var(--background);
+  --input-border-color: var(--input);
+  --input-hover-bg-color: var(--accent);
+  --input-label-color: var(--muted-foreground);
+
+  --button-bg: var(--card);
+  --button-color: var(--foreground);
+  --button-border: var(--border);
+  --button-hover-bg: var(--accent);
+  --button-hover-color: var(--accent-foreground);
+  --button-hover-border: var(--border);
+  --button-active-bg: var(--accent);
+  --button-active-border: var(--primary);
+
+  --border-radius-md: calc(var(--radius) - 0.25rem);
+  --border-radius-lg: var(--radius);
+  --shadow-island:
+    0 0 0 1px var(--border), 0 1px 2px rgb(0 0 0 / 0.04),
+    0 10px 28px -14px color-mix(in oklch, var(--primary) 40%, transparent);
+}
+
+/* Excalidraw renders dark mode by inverting the (light) canvas. 95% instead of
+   the default 93% lands a white canvas on the app's near-black background. */
+.abh-playground .excalidraw.theme--dark {
+  --theme-filter: invert(95%) hue-rotate(180deg);
+}
+
+.abh-playground .excalidraw .App-menu_top .Island,
+.abh-playground .excalidraw .dropdown-menu-container {
+  backdrop-filter: blur(12px);
+}
