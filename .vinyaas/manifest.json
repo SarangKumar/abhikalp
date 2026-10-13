@@ -165,6 +165,26 @@
     "command": {
       "files": ["src/components/ui/command/index.tsx"],
       "installedAt": "2026-10-13"
+    },
+    "calendar": {
+      "files": ["src/components/ui/calendar/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "date-picker": {
+      "files": ["src/components/ui/date-picker/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "chart": {
+      "files": ["src/components/ui/chart/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "select": {
+      "files": ["src/components/ui/select/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "checkbox": {
+      "files": ["src/components/ui/checkbox/index.tsx"],
+      "installedAt": "2026-10-13"
     }
   }
 }
