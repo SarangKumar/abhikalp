@@ -130,7 +130,7 @@ export default function Playground({
 
   return (
     <div className="abh-playground bg-background flex h-[calc(100svh-3rem)] flex-col">
-      <div className="bg-background/80 flex h-10 shrink-0 items-center justify-between gap-2 border-b px-4 text-xs backdrop-blur">
+      <div className="bg-background flex h-10 shrink-0 items-center justify-between gap-2 border-b px-4 text-xs">
         <p className="text-muted-foreground">
           Sketch ideas, flows and architecture for this project.
         </p>

@@ -14,8 +14,7 @@ export function PricingTeaser() {
           key={plan.tier}
           className={cn(
             "bg-card flex flex-col rounded-xl border p-6",
-            plan.isPopular &&
-              "border-primary/50 shadow-[0_0_32px_-8px_var(--logo-glow)]"
+            plan.isPopular && "border-primary/50 ring-primary/10 ring-4"
           )}
         >
           <div className="flex items-center justify-between">

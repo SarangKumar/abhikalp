@@ -33,10 +33,13 @@ export type NavSection = { name: string; items: NavItem[] };
 export function AppSidebar({
   sections,
   subtitle,
+  header,
   footer,
 }: {
   sections: NavSection[];
   subtitle: string;
+  /** Replaces the default logo header (e.g. the project switcher). */
+  header?: React.ReactNode;
   footer?: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -49,21 +52,23 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" className="fixed h-svh">
       <SidebarHeader>
-        <Link
-          href="/"
-          onClick={() => setOpenMobile(false)}
-          className="focus-visible:ring-sidebar-ring flex items-center gap-2 rounded-md px-1 py-1.5 outline-none focus-visible:ring-2"
-        >
-          <Logo className="size-8 shrink-0 text-sm" />
-          <span className="grid min-w-0 group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-sm font-semibold tracking-tight">
-              {siteConfig.name}
+        {header ?? (
+          <Link
+            href="/"
+            onClick={() => setOpenMobile(false)}
+            className="focus-visible:ring-sidebar-ring flex items-center gap-2 rounded-md px-1 py-1.5 outline-none focus-visible:ring-2"
+          >
+            <Logo className="size-8 shrink-0 text-sm" />
+            <span className="grid min-w-0 group-data-[collapsible=icon]:hidden">
+              <span className="truncate text-sm font-semibold tracking-tight">
+                {siteConfig.name}
+              </span>
+              <span className="text-sidebar-foreground/60 truncate text-xs">
+                {subtitle}
+              </span>
             </span>
-            <span className="text-sidebar-foreground/60 truncate text-xs">
-              {subtitle}
-            </span>
-          </span>
-        </Link>
+          </Link>
+        )}
       </SidebarHeader>
       <SidebarContent>
         {sections.map((section) => (

@@ -157,6 +157,14 @@
     "drag-and-drop": {
       "files": ["src/components/ui/drag-and-drop/index.tsx"],
       "installedAt": "2026-10-13"
+    },
+    "kbd": {
+      "files": ["src/components/ui/kbd/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "command": {
+      "files": ["src/components/ui/command/index.tsx"],
+      "installedAt": "2026-10-13"
     }
   }
 }

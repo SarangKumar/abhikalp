@@ -9,10 +9,7 @@ function Mark({ className }: { className?: string }) {
     <svg
       viewBox="0 0 512 512"
       aria-hidden="true"
-      className={cn(
-        "size-8 shrink-0 drop-shadow-[0_0_10px_var(--logo-glow)]",
-        className
-      )}
+      className={cn("size-8 shrink-0", className)}
     >
       <defs>
         <linearGradient id="logo-tile" x1="0" y1="0" x2="0" y2="1">

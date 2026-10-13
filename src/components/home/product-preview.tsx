@@ -33,7 +33,7 @@ export function ProductPreview() {
   return (
     <div
       aria-hidden
-      className="bg-card ring-border/60 relative mx-auto max-w-5xl overflow-hidden rounded-2xl border shadow-[0_24px_80px_-24px_var(--logo-glow)] ring-1"
+      className="bg-card relative mx-auto max-w-5xl overflow-hidden rounded-2xl border"
     >
       <div className="bg-muted/50 flex items-center gap-1.5 border-b px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-red-400/70" />
@@ -89,10 +89,10 @@ export function ProductPreview() {
                   <div
                     key={title}
                     className={cn(
-                      "bg-card rounded-lg border p-2.5 shadow-xs",
+                      "bg-card rounded-lg border p-2.5",
                       lane.label === "In progress" &&
                         i === 0 &&
-                        "border-primary/40 -rotate-1 shadow-md"
+                        "border-primary/50 -rotate-1"
                     )}
                   >
                     <p className="text-xs font-medium">{title}</p>

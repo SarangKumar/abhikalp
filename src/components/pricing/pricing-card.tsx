@@ -38,7 +38,7 @@ const PricingCard = ({
     <div
       className={cn(
         "bg-card mx-auto flex w-full max-w-md flex-col gap-y-2 rounded-xl border px-6 pt-4 pb-8 md:px-8",
-        isPopular && "border-primary/60 shadow-[0_0_40px_var(--glow)]"
+        isPopular && "border-primary/60 ring-primary/15 ring-4"
       )}
     >
       <h2 className="inline-flex items-center gap-2 font-mono text-xl font-bold uppercase">

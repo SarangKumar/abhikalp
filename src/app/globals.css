@@ -48,11 +48,9 @@
   --chart-4: oklch(0.65 0.17 50);
   --chart-5: oklch(0.55 0.18 340);
 
-  --glow: oklch(0.6 0.2 var(--brand-h) / 28%);
   --mesh-a: oklch(0.85 0.1 var(--brand-h) / 35%);
   --mesh-b: oklch(0.88 0.07 320 / 22%);
   --mesh-c: oklch(0.9 0.05 260 / 16%);
-  --logo-glow: oklch(0.6 0.2 var(--brand-h) / 45%);
 
   --sidebar: oklch(0.985 0.004 var(--brand-h));
   --sidebar-foreground: oklch(0.145 0.01 var(--brand-h));
@@ -95,11 +93,9 @@
   --chart-4: oklch(0.75 0.14 60);
   --chart-5: oklch(0.7 0.15 340);
 
-  --glow: oklch(0.68 0.2 var(--brand-h) / 22%);
   --mesh-a: oklch(0.45 0.16 var(--brand-h) / 24%);
   --mesh-b: oklch(0.38 0.1 320 / 16%);
   --mesh-c: oklch(0.32 0.08 260 / 12%);
-  --logo-glow: oklch(0.7 0.2 var(--brand-h) / 40%);
 
   --sidebar: oklch(0.145 0.014 var(--brand-h));
   --sidebar-foreground: oklch(0.97 0.005 var(--brand-h));
@@ -237,7 +233,7 @@
 @layer components {
   /* Landing feature card. */
   .card {
-    @apply border-border bg-card text-card-foreground hover:border-primary/40 relative min-h-[380px] overflow-hidden rounded-xl border p-4 shadow-xs transition-all duration-200 hover:shadow-[0_0_32px_var(--glow)] md:p-8;
+    @apply border-border bg-card text-card-foreground hover:border-primary/40 relative min-h-[380px] overflow-hidden rounded-xl border p-4 transition-colors duration-200 md:p-8;
   }
 }
 
@@ -274,7 +270,7 @@
   @apply border-border/80 bg-card/70 text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium backdrop-blur-sm;
 }
 @utility chip-dot {
-  @apply bg-primary size-1.5 shrink-0 rounded-full shadow-[0_0_8px_var(--glow)];
+  @apply bg-primary size-1.5 shrink-0 rounded-full;
 }
 
 @utility project-bg {

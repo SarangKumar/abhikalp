@@ -59,9 +59,8 @@
 
   --border-radius-md: calc(var(--radius) - 0.25rem);
   --border-radius-lg: var(--radius);
-  --shadow-island:
-    0 0 0 1px var(--border), 0 1px 2px rgb(0 0 0 / 0.04),
-    0 10px 28px -14px color-mix(in oklch, var(--primary) 40%, transparent);
+  /* Flat islands: a hairline border, no glow. */
+  --shadow-island: 0 0 0 1px var(--border);
 }
 
 /* Excalidraw renders dark mode by inverting the (light) canvas. 95% instead of
@@ -70,7 +69,10 @@
   --theme-filter: invert(95%) hue-rotate(180deg);
 }
 
-.abh-playground .excalidraw .App-menu_top .Island,
-.abh-playground .excalidraw .dropdown-menu-container {
-  backdrop-filter: blur(12px);
+/* Menus/popovers keep a very light lift. */
+.abh-playground .excalidraw .dropdown-menu-container,
+.abh-playground .excalidraw .popover {
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 4px 12px -6px rgb(0 0 0 / 0.12);
 }

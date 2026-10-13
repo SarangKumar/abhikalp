@@ -31,7 +31,7 @@ const Flame = ({ cursor, cardRef, mouseOnCard }: Props) => {
       viewBox="0 0 24 24"
       className="h-72 w-72 transition-all duration-200"
     >
-      <defs className="group-hover/card:shadow-md">
+      <defs>
         <radialGradient
           id="primaryGradient"
           gradientUnits="userSpaceOnUse"

@@ -18,7 +18,7 @@ export function HowItWorks() {
     <ol className="grid gap-4 md:grid-cols-3">
       {steps.map((step, i) => (
         <li key={step.title} className="bg-card relative rounded-xl border p-6">
-          <span className="bg-primary text-primary-foreground mb-4 flex size-8 items-center justify-center rounded-full font-mono text-sm shadow-[0_0_16px_var(--logo-glow)]">
+          <span className="bg-primary text-primary-foreground mb-4 flex size-8 items-center justify-center rounded-full font-mono text-sm">
             {i + 1}
           </span>
           <h3 className="font-semibold tracking-tight">{step.title}</h3>

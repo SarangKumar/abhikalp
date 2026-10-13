@@ -28,7 +28,7 @@ const ProjectCard = ({
       >
         <span className="sr-only">Open {project.title}</span>
       </Link>
-      <div className="group bg-card hover:border-primary/40 relative flex h-[184px] cursor-pointer rounded-xl border p-5 pb-4 text-left transition duration-150 ease-in-out hover:shadow-[0_0_24px_var(--glow)]">
+      <div className="group bg-card hover:border-primary/40 relative flex h-[184px] cursor-pointer rounded-xl border p-5 pb-4 text-left transition-colors duration-150 ease-in-out">
         <div className="flex w-full flex-col gap-y-2">
           <div className="flex items-center justify-between gap-x-4">
             <BoringAvatar size={32} name={project.title} colors={palette} />

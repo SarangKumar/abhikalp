@@ -303,7 +303,7 @@ export default function TaskBoard({
                     <DragDropItem
                       key={task.id}
                       id={task.id}
-                      className="bg-card hover:border-primary/40 group space-y-2 rounded-lg border p-3 shadow-xs transition-colors"
+                      className="bg-card hover:border-primary/40 group space-y-2 rounded-lg border p-3 transition-colors"
                     >
                       <div className="flex items-start justify-between gap-2">
                         {canDrag && (

@@ -7,10 +7,12 @@ import SidebarStatus from "./sidebar-status";
 export function DashboardShell({
   nav,
   subtitle = "Dashboard",
+  header,
   children,
 }: {
   nav: NavSection[];
   subtitle?: string;
+  header?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -18,6 +20,7 @@ export function DashboardShell({
       <AppSidebar
         sections={nav}
         subtitle={subtitle}
+        header={header}
         footer={<SidebarStatus className="px-1 py-1" />}
       />
       <SidebarInset className="min-w-0">{children}</SidebarInset>

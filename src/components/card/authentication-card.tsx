@@ -53,7 +53,7 @@ export default AuthenticationCard;
 
 const AuthListItem = ({ children }: { children: React.ReactNode }) => {
   return (
-    <li className="transition-color border-border group-hover/card:border-primary relative flex h-12 items-center justify-center gap-x-1 overflow-hidden rounded-md border whitespace-nowrap transition-all duration-300 group-hover/card:shadow">
+    <li className="transition-color border-border group-hover/card:border-primary relative flex h-12 items-center justify-center gap-x-1 overflow-hidden rounded-md border whitespace-nowrap transition-all duration-300">
       <span className="bg-muted absolute top-1/2 left-1/2 h-6 w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-sm duration-300 group-hover/card:opacity-0" />
       <span className="text-primary duration-300">{children}</span>
     </li>
