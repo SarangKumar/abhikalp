@@ -15,6 +15,10 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty-state";
 import { siteConfig } from "@/config/site";
+import { ROLE_LABEL } from "@/config/roles";
+import AcceptInviteButton from "@/components/dashboad/accept-invite-button";
+import { getPendingInvites } from "@/lib/invites";
+import { prisma } from "@/lib/prisma";
 
 import { getUserBySession } from "../api/utils";
 
@@ -34,10 +38,17 @@ const DashboardPage = async ({
   ]);
   if (!user) return null;
 
-  const filteredProjects = user.projects.filter(
-    (project) =>
-      !query || project.title.toLowerCase().includes(query.toLowerCase())
-  );
+  const [memberships, invites] = await Promise.all([
+    prisma.projectMember.findMany({
+      where: { userId: user.id },
+      include: { project: true },
+    }),
+    getPendingInvites(user.email),
+  ]);
+  const matches = (title: string) =>
+    !query || title.toLowerCase().includes(query.toLowerCase());
+  const filteredProjects = user.projects.filter((p) => matches(p.title));
+  const sharedProjects = memberships.filter((m) => matches(m.project.title));
 
   return (
     <div className="flex">
@@ -55,13 +66,56 @@ const DashboardPage = async ({
             <SearchProject placeholder="Search Projects" />
           </div>
 
+          {invites.length > 0 && (
+            <section className="mb-6 space-y-2">
+              <h2 className="meta">Invitations</h2>
+              <ul className="grid gap-2 lg:grid-cols-2">
+                {invites.map((inv) => (
+                  <li
+                    key={inv.id}
+                    className="bg-primary/5 border-primary/30 flex items-center justify-between gap-3 rounded-xl border p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        {inv.project.title}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {inv.invitedBy.name} invited you as{" "}
+                        {ROLE_LABEL[inv.role]}
+                      </p>
+                    </div>
+                    <AcceptInviteButton token={inv.token} size="sm" />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {sharedProjects.length > 0 && (
+            <h2 className="meta mb-2">Your projects</h2>
+          )}
           <ul className="mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {filteredProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </ul>
 
-          {user.projects.length === 0 && (
+          {sharedProjects.length > 0 && (
+            <section className="mt-8 space-y-2">
+              <h2 className="meta">Shared with you</h2>
+              <ul className="mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                {sharedProjects.map((m) => (
+                  <ProjectCard
+                    key={m.id}
+                    project={m.project}
+                    sharedRole={m.role}
+                  />
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {user.projects.length === 0 && memberships.length === 0 && (
             <Empty className="h-[60dvh]">
               <EmptyIcon>
                 <FolderPlus />

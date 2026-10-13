@@ -127,6 +127,21 @@
     "toggle-group": {
       "files": ["src/components/ui/toggle-group/index.tsx"],
       "installedAt": "2026-10-13"
+    },
+    "native-select": {
+      "files": ["src/components/ui/native-select/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "tabs": {
+      "files": ["src/components/ui/tabs/index.tsx"],
+      "installedAt": "2026-10-13"
+    },
+    "alert-dialog": {
+      "files": [
+        "src/components/ui/alert-dialog/alert-dialog.css",
+        "src/components/ui/alert-dialog/index.tsx"
+      ],
+      "installedAt": "2026-10-13"
     }
   }
 }

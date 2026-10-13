@@ -1,112 +1,333 @@
-// 'use client';
-// import React from "react";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useForm } from "react-hook-form";
-// import { createSharelinkSchema } from "@/types/schema";
-// import { z } from "zod";
-// import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { CalendarIcon } from "lucide-react";
-// import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-// import { cn } from "@/lib/utils";
-// import { Calendar } from "@/components/ui/calendar";
-// import { format } from "date-fns";
+"use client";
 
-// const ShareContainer = ({projectId}: {projectId: string | string[]}) => {
-//   console.log("form share")
+import type { Role } from "@prisma/client";
+import { Check, Copy, LogOut, Trash2, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
-//     const form = useForm<z.infer<typeof createSharelinkSchema>>({
-//       resolver: zodResolver(createSharelinkSchema),
-//       defaultValues: {
-//         expiresAt: new Date(),
-//         role: "VIEWER",
-//         projectId: typeof projectId === "string" ? projectId : projectId[0],
-//         name: "",
-//       },
-//     });
+import Avatar from "@/components/navbar/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
+import { Spinner } from "@/components/ui/spinner";
+import { ASSIGNABLE_ROLES, ROLE_DESCRIPTION, ROLE_LABEL } from "@/config/roles";
+import { api } from "@/lib/fetcher";
+import { notify } from "@/lib/notify";
 
-//      function onSubmit(values: z.infer<typeof createSharelinkSchema>) {
-//        // Do something with the form values.
-//        // ✅ This will be type-safe and validated.
-//        console.log(values);
-//      }
+type Person = { id: string; name: string; email: string; image: string | null };
 
-//      async function createLink(){}
+export type MembersPanelProps = {
+  projectId: string;
+  viewerId: string;
+  viewerRole: Role;
+  owner: Person;
+  members: { id: string; role: Role; user: Person }[];
+  invites: { id: string; email: string; role: Role; expiresAt: string }[];
+  maxInviteDays: number;
+  maxMembers: number;
+};
 
-//   return (
-//     <section className="border-b p-4 md:p-6">
-//       <h2 className="mb-4 text-base">Share</h2>
+const EXPIRY_OPTIONS = [1, 3, 7, 14, 30, 60, 90];
 
-//       <Form {...form}>
-//         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-//           <FormField
-//             control={form.control}
-//             name="expiresAt"
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel>Share Link Title</FormLabel>
-//                 <FormControl>
-//                   <Input placeholder="name" {...field} />
-//                 </FormControl>
-//                 <FormDescription>Link expiry time</FormDescription>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+export default function MembersPanel(props: MembersPanelProps) {
+  const {
+    projectId,
+    viewerId,
+    viewerRole,
+    owner,
+    members,
+    invites,
+    maxInviteDays,
+    maxMembers,
+  } = props;
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<Role>("COLLABORATOR");
+  const [days, setDays] = useState(Math.min(7, maxInviteDays));
+  const [link, setLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
-//           <FormField
-//             control={form.control}
-//             name="expiresAt"
-//             render={({ field }) => (
-//               <FormItem className="flex flex-col">
-//                 <FormLabel>Date of birth</FormLabel>
-//                 <Popover>
-//                   <PopoverTrigger asChild>
-//                     <FormControl>
-//                       <Button
-//                         variant={"outline"}
-//                         className={cn(
-//                           "w-[240px] pl-3 text-left font-normal",
-//                           !field.value && "text-muted-foreground"
-//                         )}
-//                       >
-//                         {field.value ? (
-//                           format(field.value, "PPP")
-//                         ) : (
-//                           <span>Expiry Date</span>
-//                         )}
-//                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                       </Button>
-//                     </FormControl>
-//                   </PopoverTrigger>
-//                   <PopoverContent className="w-auto p-0" align="start">
-//                     <Calendar
-//                       mode="single"
-//                       selected={field.value}
-//                       onSelect={field.onChange}
-//                       // disabled={(date) =>
-//                       //   date > new Date() || date < new Date("1900-01-01")
-//                       // }
-//                       initialFocus
-//                     />
-//                   </PopoverContent>
-//                 </Popover>
-//                 <FormDescription>
-//                   Your date of birth is used to calculate your age.
-//                 </FormDescription>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+  const canManage = viewerRole === "OWNER" || viewerRole === "ADMIN";
+  const base = `/api/v1/projects/${projectId}`;
+  const refresh = () => startTransition(() => router.refresh());
 
-//           <Button type="submit">Create Share Link</Button>
-//         </form>
-//       </Form>
+  async function run(
+    key: string,
+    fn: () => Promise<unknown>,
+    success?: string
+  ) {
+    setBusy(key);
+    try {
+      await fn();
+      if (success) notify.success(success);
+      refresh();
+    } catch (error) {
+      notify.error("Something went wrong", (error as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
-//       {/* <Button onClick={createLink}>Create link</Button> */}
-//     </section>
-//   );
-// };
+  async function invite(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy("invite");
+    try {
+      const res = await api<{ url: string }>(`${base}/invites`, {
+        method: "POST",
+        body: { email, role, expiresInDays: days },
+      });
+      setLink(res.url);
+      setCopied(false);
+      setEmail("");
+      notify.success("Invite created", "Share the link with your teammate.");
+      refresh();
+    } catch (error) {
+      notify.error("Could not invite", (error as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
-// export default ShareContainer;
+  const canEditMember = (memberRole: Role) =>
+    viewerRole === "OWNER" ||
+    (viewerRole === "ADMIN" && memberRole !== "ADMIN");
+
+  return (
+    <Card id="share" className="scroll-mt-16">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          Collaborators
+          <Badge variant="secondary">
+            {members.length + 1} / {maxMembers + 1}
+          </Badge>
+          {pending && <Spinner className="size-3" />}
+        </CardTitle>
+        <CardDescription>
+          Invite teammates by email and choose what they can do. Invites are
+          tied to the email address and expire automatically.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {canManage && (
+          <form
+            onSubmit={invite}
+            className="grid gap-3 md:grid-cols-[1fr_auto_auto_auto] md:items-end"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-email">Email</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                required
+                placeholder="teammate@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-role">Role</Label>
+              <NativeSelect
+                id="invite-role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as Role)}
+              >
+                {ASSIGNABLE_ROLES.filter(
+                  (r) => viewerRole === "OWNER" || r !== "ADMIN"
+                ).map((r) => (
+                  <NativeSelectOption key={r} value={r}>
+                    {ROLE_LABEL[r]}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-expiry">Expires in</Label>
+              <NativeSelect
+                id="invite-expiry"
+                value={days}
+                onChange={(e) => setDays(Number(e.target.value))}
+              >
+                {EXPIRY_OPTIONS.filter((d) => d <= maxInviteDays).map((d) => (
+                  <NativeSelectOption key={d} value={d}>
+                    {d} {d === 1 ? "day" : "days"}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+            <Button type="submit" disabled={busy === "invite"}>
+              {busy === "invite" ? <Spinner /> : <UserPlus />}
+              Invite
+            </Button>
+            <p className="text-muted-foreground text-xs md:col-span-4">
+              {ROLE_DESCRIPTION[role]}.
+            </p>
+          </form>
+        )}
+
+        {link && (
+          <div className="bg-muted/40 flex items-center gap-2 rounded-lg border p-2">
+            <code className="flex-1 truncate text-xs">{link}</code>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={async () => {
+                await navigator.clipboard.writeText(link);
+                setCopied(true);
+              }}
+            >
+              {copied ? <Check /> : <Copy />}
+              {copied ? "Copied" : "Copy link"}
+            </Button>
+          </div>
+        )}
+
+        <ul className="divide-y rounded-lg border">
+          <MemberRow person={owner} right={<Badge>{ROLE_LABEL.OWNER}</Badge>} />
+          {members.map((m) => (
+            <MemberRow
+              key={m.id}
+              person={m.user}
+              right={
+                <div className="flex items-center gap-2">
+                  {canEditMember(m.role) && m.user.id !== viewerId ? (
+                    <NativeSelect
+                      aria-label={`Role for ${m.user.name}`}
+                      className="h-8 w-36 text-xs"
+                      value={m.role}
+                      disabled={busy === m.id}
+                      onChange={(e) =>
+                        run(
+                          m.id,
+                          () =>
+                            api(`${base}/members`, {
+                              method: "PATCH",
+                              body: { memberId: m.id, role: e.target.value },
+                            }),
+                          "Role updated"
+                        )
+                      }
+                    >
+                      {ASSIGNABLE_ROLES.filter(
+                        (r) => viewerRole === "OWNER" || r !== "ADMIN"
+                      ).map((r) => (
+                        <NativeSelectOption key={r} value={r}>
+                          {ROLE_LABEL[r]}
+                        </NativeSelectOption>
+                      ))}
+                    </NativeSelect>
+                  ) : (
+                    <Badge variant="secondary">{ROLE_LABEL[m.role]}</Badge>
+                  )}
+                  {(canEditMember(m.role) || m.user.id === viewerId) && (
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={
+                        m.user.id === viewerId
+                          ? "Leave project"
+                          : `Remove ${m.user.name}`
+                      }
+                      disabled={busy === m.id}
+                      onClick={() =>
+                        run(
+                          m.id,
+                          async () => {
+                            await api(`${base}/members?memberId=${m.id}`, {
+                              method: "DELETE",
+                            });
+                            if (m.user.id === viewerId)
+                              router.push("/dashboard");
+                          },
+                          m.user.id === viewerId
+                            ? "You left the project"
+                            : "Member removed"
+                        )
+                      }
+                    >
+                      {m.user.id === viewerId ? <LogOut /> : <Trash2 />}
+                    </Button>
+                  )}
+                </div>
+              }
+            />
+          ))}
+        </ul>
+
+        {canManage && invites.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="meta">Pending invites</h3>
+            <ul className="divide-y rounded-lg border">
+              {invites.map((inv) => (
+                <li
+                  key={inv.id}
+                  className="flex items-center justify-between gap-2 px-3 py-2 text-xs"
+                >
+                  <span className="truncate">{inv.email}</span>
+                  <span className="text-muted-foreground flex items-center gap-2">
+                    <Badge variant="outline">{ROLE_LABEL[inv.role]}</Badge>
+                    expires {new Date(inv.expiresAt).toLocaleDateString()}
+                    <Button
+                      size="icon-xs"
+                      variant="ghost"
+                      aria-label={`Revoke invite for ${inv.email}`}
+                      disabled={busy === inv.id}
+                      onClick={() =>
+                        run(
+                          inv.id,
+                          () =>
+                            api(`${base}/invites?inviteId=${inv.id}`, {
+                              method: "DELETE",
+                            }),
+                          "Invite revoked"
+                        )
+                      }
+                    >
+                      <Trash2 />
+                    </Button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function MemberRow({
+  person,
+  right,
+}: {
+  person: Person;
+  right: React.ReactNode;
+}) {
+  return (
+    <li className="flex items-center justify-between gap-3 px-3 py-2">
+      <div className="flex min-w-0 items-center gap-3">
+        <Avatar name={person.name} image={person.image ?? ""} size="base" />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{person.name}</p>
+          <p className="text-muted-foreground truncate text-xs">
+            {person.email}
+          </p>
+        </div>
+      </div>
+      {right}
+    </li>
+  );
+}

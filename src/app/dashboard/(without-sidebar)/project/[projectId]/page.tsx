@@ -2,45 +2,55 @@ import { Edit } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getUserBySession } from "@/app/api/utils";
 import TaskStatusCard from "@/components/dashboad/project/task/task-status-card";
 import Avatar from "@/components/navbar/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { ScoreRing } from "@/components/ui/score-ring";
-import prisma from "@/lib/prisma";
+import { Tooltip } from "@/components/ui/tooltip";
+import { ROLE_LABEL } from "@/config/roles";
+import { can, getProjectAccess } from "@/lib/access";
+import { prisma } from "@/lib/prisma";
 import { cn, formatDate } from "@/lib/utils";
 
 type Props = { params: Promise<{ projectId: string }> };
 
 async function getProject(projectId: string) {
-  const user = await getUserBySession();
-  if (!user || !/^[a-f\d]{24}$/i.test(projectId)) return null;
-  return prisma.project.findFirst({
-    where: { id: projectId, ownerId: user.id },
-    include: { tasks: true, owner: true },
+  const access = await getProjectAccess(projectId);
+  if (!access) return null;
+  const tasks = await prisma.task.findMany({
+    where: { projectId },
+    orderBy: { updatedAt: "desc" },
   });
+  return { ...access, tasks };
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { projectId } = await params;
-  const project = await getProject(projectId);
-  if (!project) return {};
-  return { title: project.title, description: project.description || "" };
+  const data = await getProject((await params).projectId);
+  if (!data) return {};
+  return {
+    title: data.project.title,
+    description: data.project.description || "",
+  };
 }
 
 const ProjectPage = async ({ params }: Props) => {
-  const { projectId } = await params;
-  const project = await getProject(projectId);
-  if (!project) notFound();
+  const data = await getProject((await params).projectId);
+  if (!data) notFound();
+  const { project, role, tasks } = data;
 
-  const total = project.tasks.length;
+  const people = [
+    { ...project.owner, role: "OWNER" as const },
+    ...project.members.map((m) => ({ ...m.user, role: m.role })),
+  ];
+  const total = tasks.length;
   const count = (status: string) =>
-    project.tasks.filter((t) => t.status === status).length;
+    tasks.filter((t) => t.status === status).length;
   const rings = [
     { label: "Completed", value: count("COMPLETED") },
     { label: "In progress", value: count("IN_PROGRESS") },
     { label: "Pending", value: count("PENDING") },
   ];
+  const href = (path = "") => `/dashboard/project/${project.id}${path}`;
 
   return (
     <div className="h-full space-y-4 p-4 text-sm md:p-6">
@@ -79,69 +89,112 @@ const ProjectPage = async ({ params }: Props) => {
           </div>
         </div>
       </div>
+
       <div className="mb-4 flex flex-col justify-between gap-5 md:flex-row md:items-center">
         <h1 className="page-title flex items-center">
           {project.title}
-          <Link
-            href={`/dashboard/project/${project.id}/settings`}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon-sm" }),
-              "ml-2"
-            )}
-          >
-            <Edit className="text-muted-foreground size-4" />
-            <span className="sr-only">Edit</span>
-          </Link>
+          {role === "OWNER" && (
+            <Link
+              href={href("/settings")}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon-sm" }),
+                "ml-2"
+              )}
+            >
+              <Edit className="text-muted-foreground size-4" />
+              <span className="sr-only">Edit</span>
+            </Link>
+          )}
         </h1>
         <div className="flex items-center gap-x-4">
-          {/* TODO(collaboration): show real collaborators once roles/share links exist. */}
-          <Avatar
-            name={project.owner.name}
-            image={project.owner.image || ""}
-            size="base"
-            className="ring-background ring-2"
-          />
-          <Link
-            href={`/dashboard/project/${project.id}/settings#share`}
-            className={buttonVariants()}
-          >
-            Invite Collaborators
+          <div className="flex -space-x-2">
+            {people.slice(0, 5).map((p) => (
+              <Tooltip key={p.id} content={`${p.name} · ${ROLE_LABEL[p.role]}`}>
+                <span className="inline-flex">
+                  <Avatar
+                    name={p.name}
+                    image={p.image || ""}
+                    size="base"
+                    className="ring-background ring-2"
+                  />
+                </span>
+              </Tooltip>
+            ))}
+            {people.length > 5 && (
+              <span className="bg-secondary ring-background flex size-8 items-center justify-center rounded-full text-xs ring-2">
+                +{people.length - 5}
+              </span>
+            )}
+          </div>
+          <Link href={href("/settings#share")} className={buttonVariants()}>
+            {can.manageMembers(role) ? "Invite Collaborators" : "View team"}
           </Link>
         </div>
       </div>
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-        <section className="xl:col-span-2">
+        <section className="space-y-4 xl:col-span-2">
           <p className="text-xs leading-relaxed sm:text-sm">
             {project.description}
           </p>
+          <div className="flex flex-wrap gap-2">
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                GitHub
+              </a>
+            )}
+            {project.deployedUrl && (
+              <a
+                href={project.deployedUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                Live site
+              </a>
+            )}
+            <Link
+              href={href("/documentation")}
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+            >
+              Documentation
+            </Link>
+          </div>
         </section>
-        <section className="grid grid-cols-1 gap-4">
+        <section className="grid grid-cols-1 content-start gap-4">
           <div className="flex items-center justify-between">
             <h2 className="section-title text-base">Tasks ({total})</h2>
             <Link
               className={buttonVariants({ variant: "link", size: "sm" })}
-              href={`/dashboard/project/${project.id}/todo`}
+              href={href("/todo")}
             >
               View all
             </Link>
           </div>
-          {project.tasks.slice(0, 4).map((task) => (
+          {tasks.slice(0, 4).map((task) => (
             <TaskStatusCard
               projectName={project.title}
               task={task}
               key={task.id}
             />
           ))}
-          <Link
-            href={`/dashboard/project/${project.id}/todo`}
-            className={buttonVariants({
-              variant: "outline",
-              size: "lg",
-              className: "border-dashed text-xs font-normal",
-            })}
-          >
-            + Add a new Task
-          </Link>
+          {can.edit(role) && (
+            <Link
+              href={href("/todo?new=1")}
+              className={buttonVariants({
+                variant: "outline",
+                size: "lg",
+                className: "border-dashed text-xs font-normal",
+              })}
+            >
+              + Add a new Task
+            </Link>
+          )}
         </section>
       </div>
     </div>

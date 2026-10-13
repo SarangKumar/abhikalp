@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Role } from "@prisma/client";
 
+export { ASSIGNABLE_ROLES, ROLE_LABEL } from "@/config/roles";
 import { getUserBySession } from "@/app/api/utils";
 import { prisma } from "@/lib/prisma";
 
@@ -12,21 +13,11 @@ export const isObjectId = (id: unknown): id is string =>
 
 /** What each role may do. OWNER is implicit (Project.ownerId). */
 export const can = {
-  read: (_role: ProjectRole) => true,
+  read: (role: ProjectRole) => Boolean(role),
   edit: (role: ProjectRole) => role !== "VIEWER",
   manageMembers: (role: ProjectRole) => role === "OWNER" || role === "ADMIN",
   editSettings: (role: ProjectRole) => role === "OWNER" || role === "ADMIN",
 };
-
-export const ROLE_LABEL: Record<ProjectRole, string> = {
-  OWNER: "Owner",
-  ADMIN: "Admin",
-  COLLABORATOR: "Collaborator",
-  VIEWER: "Viewer",
-};
-
-/** Roles that can be granted to a member (owner is never granted). */
-export const ASSIGNABLE_ROLES = ["ADMIN", "COLLABORATOR", "VIEWER"] as const;
 
 /**
  * Resolve the signed-in user's role on a project.

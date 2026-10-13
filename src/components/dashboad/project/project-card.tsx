@@ -1,17 +1,25 @@
-import { Project } from "@prisma/client";
+import type { Project, Role } from "@prisma/client";
 import BoringAvatar from "boring-avatars";
 import { ChevronRight, Globe, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 
 import { GitHubIcon } from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { ROLE_LABEL } from "@/config/roles";
 import { cn, formatDate } from "@/lib/utils";
 
 import MarkFavouriteButton from "./mark-favourite-button";
 
 const palette = ["#7c3aed", "#a855f7", "#c084fc", "#6d28d9", "#e879f9"];
 
-const ProjectCard = ({ project }: { project: Project }) => {
+const ProjectCard = ({
+  project,
+  sharedRole,
+}: {
+  project: Project;
+  sharedRole?: Role;
+}) => {
   return (
     <li className="relative list-none">
       <Link
@@ -83,10 +91,14 @@ const ProjectCard = ({ project }: { project: Project }) => {
                   <Globe className="size-3.5" />
                 </a>
               )}
-              <MarkFavouriteButton
-                projectId={project.id}
-                isFavourite={project.isFavourite}
-              />
+              {sharedRole ? (
+                <Badge variant="secondary">{ROLE_LABEL[sharedRole]}</Badge>
+              ) : (
+                <MarkFavouriteButton
+                  projectId={project.id}
+                  isFavourite={project.isFavourite}
+                />
+              )}
             </div>
           </div>
         </div>
