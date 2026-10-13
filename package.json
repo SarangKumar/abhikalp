@@ -14,6 +14,7 @@
     "prepare": "husky",
     "prisma-seed": "prisma generate && prisma db push && node src/scripts/seed.js",
     "seed": "node src/scripts/seed.js",
+    "icons": "node scripts/generate-icons.mjs",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/v1/webhook",
     "format": "prettier . --write --ignore-unknown"
   },
@@ -38,6 +39,7 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.90.0",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "stripe": "^23.0.0",
     "tailwind-merge": "^3.7.0",
