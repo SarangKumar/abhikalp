@@ -4,6 +4,8 @@ import type { TaskPriority, TaskStatus } from "@prisma/client";
 import {
   CalendarClock,
   Clock5,
+  ListChecks,
+  MessageSquare,
   MoreHorizontal,
   Plus,
   Search,
@@ -11,7 +13,11 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
-import MarkdownRender from "@/components/dashboad/project/task/markdown-render";
+import { LabelBadge } from "@/components/dashboad/project/planning/label-badge";
+import {
+  MemberAvatar,
+  type Member,
+} from "@/components/dashboad/project/planning/member-avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   DragDrop,
@@ -21,14 +27,6 @@ import {
   type DragDropItems,
 } from "@/components/ui/drag-and-drop";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,27 +42,26 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/fetcher";
 import { notify } from "@/lib/notify";
+import { isOverdue, PRIORITY_META } from "@/lib/planning";
 import { cn } from "@/lib/utils";
 
-export type BoardTask = {
-  id: string;
-  title: string;
-  description: string | null;
-  status: TaskStatus;
-  priority: TaskPriority;
-  estimatedTimeForCompletion: number | null;
-  dueDate: string | null;
-  order: number | null;
-};
+import { TaskDetailDialog } from "./task-detail-dialog";
+import {
+  draftFromTask,
+  draftToBody,
+  emptyDraft,
+  TaskFormDialog,
+  type Draft,
+} from "./task-form-dialog";
+import type { BoardTask, MilestoneOption } from "./types";
+
+export type { BoardTask } from "./types";
 
 type Columns = Record<TaskStatus, string[]>;
 
@@ -88,33 +85,26 @@ const COLUMNS: { status: TaskStatus; label: string; dot: string }[] = [
   { status: "COMPLETED", label: "Done", dot: "bg-success" },
 ];
 const PRIORITIES: TaskPriority[] = ["HIGH", "MEDIUM", "LOW"];
-const PRIORITY_STYLE: Record<TaskPriority, string> = {
-  HIGH: "border-destructive/30 bg-destructive/10 text-destructive",
-  MEDIUM: "border-primary/30 bg-primary/10 text-primary",
-  LOW: "border-border text-muted-foreground",
-};
-
-type Draft = Omit<BoardTask, "id" | "estimatedTimeForCompletion" | "order"> & {
-  id?: string;
-  estimatedTimeForCompletion: string;
-};
-const emptyDraft = (status: TaskStatus = "PENDING"): Draft => ({
-  title: "",
-  description: "",
-  status,
-  priority: "MEDIUM",
-  estimatedTimeForCompletion: "",
-  dueDate: null,
-});
+const PRIORITY_STYLE = Object.fromEntries(
+  Object.entries(PRIORITY_META).map(([k, v]) => [k, v.className])
+) as Record<TaskPriority, string>;
 
 export default function TaskBoard({
   projectId,
   tasks,
   canEdit,
+  canModerate,
+  currentUserId,
+  members,
+  milestones,
 }: {
   projectId: string;
   tasks: BoardTask[];
   canEdit: boolean;
+  canModerate: boolean;
+  currentUserId: string;
+  members: Member[];
+  milestones: MilestoneOption[];
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -180,20 +170,14 @@ export default function TaskBoard({
     }
   }
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    if (!draft) return;
+  async function save(d: Draft) {
     setSaving(true);
-    const body = {
-      ...draft,
-      estimatedTimeForCompletion: draft.estimatedTimeForCompletion
-        ? Number(draft.estimatedTimeForCompletion)
-        : null,
-      dueDate: draft.dueDate || null,
-    };
     try {
-      await api(endpoint, { method: draft.id ? "PATCH" : "POST", body });
-      notify.success(draft.id ? "Task updated" : "Task created");
+      await api(endpoint, {
+        method: d.id ? "PATCH" : "POST",
+        body: draftToBody(d),
+      });
+      notify.success(d.id ? "Task updated" : "Task created");
       setDraft(null);
       if (searchParams.get("new"))
         router.replace(`/dashboard/project/${projectId}/todo`);
@@ -347,16 +331,7 @@ export default function TaskBoard({
                               ))}
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                onClick={() =>
-                                  setDraft({
-                                    ...task,
-                                    description: task.description ?? "",
-                                    estimatedTimeForCompletion:
-                                      task.estimatedTimeForCompletion?.toString() ??
-                                      "",
-                                    dueDate: task.dueDate?.slice(0, 10) ?? null,
-                                  })
-                                }
+                                onClick={() => setDraft(draftFromTask(task))}
                               >
                                 Edit
                               </DropdownMenuItem>
@@ -375,6 +350,13 @@ export default function TaskBoard({
                           {task.description}
                         </p>
                       )}
+                      {task.labels.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {task.labels.map((l) => (
+                            <LabelBadge key={l} label={l} />
+                          ))}
+                        </div>
+                      )}
                       <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-[11px]">
                         <Badge
                           variant="outline"
@@ -388,18 +370,35 @@ export default function TaskBoard({
                             {task.estimatedTimeForCompletion}h
                           </span>
                         ) : null}
+                        {task.checklist.length > 0 && (
+                          <span className="flex items-center gap-1">
+                            <ListChecks className="size-3" />
+                            {task.checklist.filter((c) => c.done).length}/
+                            {task.checklist.length}
+                          </span>
+                        )}
+                        {task.commentCount > 0 && (
+                          <span className="flex items-center gap-1">
+                            <MessageSquare className="size-3" />
+                            {task.commentCount}
+                          </span>
+                        )}
                         {task.dueDate && (
                           <span
                             className={cn(
                               "flex items-center gap-1",
-                              task.status !== "COMPLETED" &&
-                                new Date(task.dueDate) < new Date() &&
-                                "text-destructive"
+                              isOverdue(task) && "text-destructive"
                             )}
                           >
                             <CalendarClock className="size-3" />
                             {new Date(task.dueDate).toLocaleDateString()}
                           </span>
+                        )}
+                        {task.assignee && (
+                          <MemberAvatar
+                            member={task.assignee}
+                            className="ml-auto"
+                          />
                         )}
                       </div>
                     </DragDropItem>
@@ -411,151 +410,24 @@ export default function TaskBoard({
         </DragDrop>
       )}
 
-      <Dialog
-        open={Boolean(draft)}
-        onOpenChange={(open) => !open && setDraft(null)}
-      >
-        <DialogContent size="lg">
-          {draft && (
-            <form onSubmit={save} className="space-y-4">
-              <DialogHeader>
-                <DialogTitle>{draft.id ? "Edit task" : "New task"}</DialogTitle>
-                <DialogDescription>
-                  Descriptions support markdown.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-1.5">
-                <Label htmlFor="task-title">Title</Label>
-                <Input
-                  id="task-title"
-                  required
-                  autoFocus
-                  maxLength={140}
-                  value={draft.title}
-                  onChange={(e) =>
-                    setDraft({ ...draft, title: e.target.value })
-                  }
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="task-desc">Description</Label>
-                <Textarea
-                  id="task-desc"
-                  rows={5}
-                  value={draft.description ?? ""}
-                  onChange={(e) =>
-                    setDraft({ ...draft, description: e.target.value })
-                  }
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="task-status">Status</Label>
-                  <NativeSelect
-                    id="task-status"
-                    value={draft.status}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        status: e.target.value as TaskStatus,
-                      })
-                    }
-                  >
-                    {COLUMNS.map((c) => (
-                      <NativeSelectOption key={c.status} value={c.status}>
-                        {c.label}
-                      </NativeSelectOption>
-                    ))}
-                  </NativeSelect>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="task-priority">Priority</Label>
-                  <NativeSelect
-                    id="task-priority"
-                    value={draft.priority}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        priority: e.target.value as TaskPriority,
-                      })
-                    }
-                  >
-                    {PRIORITIES.map((p) => (
-                      <NativeSelectOption key={p} value={p}>
-                        {p[0] + p.slice(1).toLowerCase()}
-                      </NativeSelectOption>
-                    ))}
-                  </NativeSelect>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="task-est">Estimate (h)</Label>
-                  <Input
-                    id="task-est"
-                    type="number"
-                    min={0}
-                    max={1000}
-                    value={draft.estimatedTimeForCompletion}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        estimatedTimeForCompletion: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="task-due">Due date</Label>
-                  <Input
-                    id="task-due"
-                    type="date"
-                    value={draft.dueDate ?? ""}
-                    onChange={(e) =>
-                      setDraft({ ...draft, dueDate: e.target.value || null })
-                    }
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setDraft(null)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={saving}>
-                  {saving && <Spinner />}
-                  {draft.id ? "Save changes" : "Create task"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={Boolean(viewing)}
-        onOpenChange={(open) => !open && setViewing(null)}
-      >
-        <DialogContent size="lg">
-          {viewing && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{viewing.title}</DialogTitle>
-                <DialogDescription>
-                  {COLUMNS.find((c) => c.status === viewing.status)?.label} ·{" "}
-                  {viewing.priority.toLowerCase()} priority
-                </DialogDescription>
-              </DialogHeader>
-              <div className="overflow-y-auto">
-                <MarkdownRender>
-                  {viewing.description || "_No description._"}
-                </MarkdownRender>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <TaskFormDialog
+        draft={draft}
+        setDraft={setDraft}
+        members={members}
+        milestones={milestones}
+        saving={saving}
+        onSubmit={(d) => void save(d)}
+      />
+      <TaskDetailDialog
+        projectId={projectId}
+        task={viewing ? (byId.get(viewing.id) ?? viewing) : null}
+        onClose={() => setViewing(null)}
+        canEdit={canEdit}
+        canModerate={canModerate}
+        currentUserId={currentUserId}
+        milestones={milestones}
+        onChanged={refresh}
+      />
     </div>
   );
 }

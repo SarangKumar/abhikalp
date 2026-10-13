@@ -16,7 +16,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { DateField } from "@/components/date-field";
 import { Label } from "@/components/ui/label";
+import { startOfDay } from "@/lib/planning";
 import {
   NativeSelect,
   NativeSelectOption,
@@ -39,7 +41,8 @@ export type MembersPanelProps = {
   maxMembers: number;
 };
 
-const EXPIRY_OPTIONS = [1, 3, 7, 14, 30, 60, 90];
+const addDays = (d: Date, n: number) =>
+  new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 
 export default function MembersPanel(props: MembersPanelProps) {
   const {
@@ -57,7 +60,14 @@ export default function MembersPanel(props: MembersPanelProps) {
   const [busy, setBusy] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("COLLABORATOR");
-  const [days, setDays] = useState(Math.min(7, maxInviteDays));
+  const today = startOfDay(new Date());
+  const [expiresOn, setExpiresOn] = useState<Date>(() =>
+    addDays(today, Math.min(7, maxInviteDays))
+  );
+  const days = Math.max(
+    1,
+    Math.round((startOfDay(expiresOn).getTime() - today.getTime()) / 86_400_000)
+  );
   const [link, setLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -155,18 +165,17 @@ export default function MembersPanel(props: MembersPanelProps) {
               </NativeSelect>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="invite-expiry">Expires in</Label>
-              <NativeSelect
+              <Label htmlFor="invite-expiry">Expires on</Label>
+              <DateField
                 id="invite-expiry"
-                value={days}
-                onChange={(e) => setDays(Number(e.target.value))}
-              >
-                {EXPIRY_OPTIONS.filter((d) => d <= maxInviteDays).map((d) => (
-                  <NativeSelectOption key={d} value={d}>
-                    {d} {d === 1 ? "day" : "days"}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                value={expiresOn}
+                clearable={false}
+                onChange={(d) => d && setExpiresOn(d)}
+                disabledDates={[
+                  { before: addDays(today, 1) },
+                  { after: addDays(today, maxInviteDays) },
+                ]}
+              />
             </div>
             <Button type="submit" disabled={busy === "invite"}>
               {busy === "invite" ? (

@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import TaskBoard from "@/components/dashboad/project/todo/task-board";
 import { siteConfig } from "@/config/site";
 import { can, getProjectAccess } from "@/lib/access";
-import { prisma } from "@/lib/prisma";
+import { loadBoardTasks, loadMilestones } from "@/lib/planning-data";
+import { assignableMembers } from "@/lib/project-members";
 
 export const metadata: Metadata = {
   title: "To-Do",
@@ -19,11 +20,11 @@ export default async function ProjectTodoPage({
 }) {
   const access = await getProjectAccess((await params).projectId);
   if (!access) notFound();
-  const tasks = await prisma.task.findMany({
-    where: { projectId: access.project.id },
-    orderBy: { createdAt: "asc" },
-  });
-
+  const projectId = access.project.id;
+  const [tasks, milestones] = await Promise.all([
+    loadBoardTasks(projectId),
+    loadMilestones(projectId),
+  ]);
   return (
     <div className="space-y-4 p-4 md:p-6">
       <div>
@@ -34,18 +35,13 @@ export default async function ProjectTodoPage({
       </div>
       <Suspense>
         <TaskBoard
-          projectId={access.project.id}
+          projectId={projectId}
           canEdit={can.edit(access.role)}
-          tasks={tasks.map((t) => ({
-            id: t.id,
-            title: t.title,
-            description: t.description,
-            status: t.status,
-            priority: t.priority,
-            estimatedTimeForCompletion: t.estimatedTimeForCompletion,
-            dueDate: t.dueDate?.toISOString() ?? null,
-            order: t.order,
-          }))}
+          canModerate={can.manageMembers(access.role)}
+          currentUserId={access.user.id}
+          members={assignableMembers(access)}
+          milestones={milestones.map((m) => ({ id: m.id, title: m.title }))}
+          tasks={tasks}
         />
       </Suspense>
     </div>
