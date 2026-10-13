@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import DangerZone from "@/components/dashboad/project/settings/danger-zone";
+import { PageHeader } from "@/components/dashboad/project/planning/page-header";
+import { ProjectPlanCard } from "@/components/dashboad/project/settings/project-plan-card";
 import MembersPanel from "@/components/dashboad/project/share-container";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { siteConfig } from "@/config/site";
@@ -48,35 +50,44 @@ const SettingsPage = async ({
     : [];
 
   return (
-    <div>
-      <h2 className="page-title border-b p-4 md:p-6">
-        Settings · {project.title}
-      </h2>
-      <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-6">
-        <MembersPanel
-          projectId={project.id}
-          viewerId={user.id}
-          viewerRole={role}
-          owner={person(project.owner)}
-          members={project.members.map((m) => ({
-            id: m.id,
-            role: m.role,
-            user: person(m.user),
-          }))}
-          invites={invites.map((i) => ({
-            id: i.id,
-            email: i.email,
-            role: i.role,
-            expiresAt: i.expiresAt.toISOString(),
-          }))}
-          maxInviteDays={plan.maxInviteDays}
-          maxMembers={plan.maxMembers}
-        />
-      </div>
+    <div className="mx-auto w-full max-w-4xl space-y-6 p-4 md:p-6">
+      <PageHeader
+        title="Settings"
+        description={`Plan, members and details for ${project.title}.`}
+      />
+      <ProjectPlanCard
+        projectId={project.id}
+        canEdit={can.editSettings(role)}
+        initial={{
+          status: project.status ?? "ACTIVE",
+          health: project.health ?? "ON_TRACK",
+          startDate: project.startDate?.toISOString() ?? null,
+          targetDate: project.targetDate?.toISOString() ?? null,
+        }}
+      />
+      <MembersPanel
+        projectId={project.id}
+        viewerId={user.id}
+        viewerRole={role}
+        owner={person(project.owner)}
+        members={project.members.map((m) => ({
+          id: m.id,
+          role: m.role,
+          user: person(m.user),
+        }))}
+        invites={invites.map((i) => ({
+          id: i.id,
+          email: i.email,
+          role: i.role,
+          expiresAt: i.expiresAt.toISOString(),
+        }))}
+        maxInviteDays={plan.maxInviteDays}
+        maxMembers={plan.maxMembers}
+      />
       {role === "OWNER" ? (
         <DangerZone project={project} />
       ) : (
-        <p className="text-muted-foreground mx-auto max-w-5xl px-4 pb-6 text-xs md:px-6">
+        <p className="text-muted-foreground text-xs">
           Only the project owner can edit project details.
         </p>
       )}

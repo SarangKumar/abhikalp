@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { notify } from "@/lib/notify";
 import { createProjectSchema, type CreateProjectInput } from "@/types/schema";
 
@@ -30,7 +31,9 @@ export function ProjectForm({
   extraBody,
   submitLabel,
   onSuccess,
+  className,
 }: {
+  className?: string;
   endpoint: string;
   defaultValues: CreateProjectInput;
   extraBody?: Record<string, unknown>;
@@ -72,7 +75,7 @@ export function ProjectForm({
   return (
     <Form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="mx-auto mb-20 max-w-3xl gap-8"
+      className={cn("mx-auto mb-20 max-w-3xl gap-8", className)}
     >
       <FormField name="title" error={errors.title?.message} disabled={loading}>
         <FormItem>
