@@ -25,6 +25,18 @@ npm run dev
 2. Enable the Customer Portal in the Stripe dashboard. Plan changes and cancellations go through the portal.
 3. Webhook: `POST /api/v1/webhook` with the events `checkout.session.completed` and `customer.subscription.created`/`updated`/`deleted`. For local testing, run `npm run stripe:listen` and copy the `whsec_...` value into `STRIPE_WEBHOOK_SECRET`.
 
+## Features
+
+Projects, kanban tasks (priority, estimate, due date), project markdown docs, web-scrape references, an AI assistant, an npm package finder, collaborators with roles (Owner, Admin, Collaborator, Viewer) and email-bound invite links, plus Stripe billing. See `FEATURES.md` and `/docs`.
+
+## AI assistant (optional)
+
+Set `OPENAI_API_KEY` (and optionally `OPENAI_BASE_URL` for any OpenAI-compatible provider, and `AI_MODEL`). Without it, the AI page shows a "not configured" state. Models per plan live in `src/config/subscription.ts`.
+
+## Icons
+
+`npm run icons` regenerates `public/icons/*`, `src/app/icon.png` and `apple-icon.png` from the app name (run it again after renaming).
+
 ## UI
 
 The components come from Vinyaas (`npx vinyaas add <name>`). Theme tokens live in `src/app/globals.css`; change `--brand-h` to re-hue the brand colour.

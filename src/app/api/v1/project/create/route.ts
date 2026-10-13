@@ -20,7 +20,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const parsed = createProjectSchema.safeParse(await req.json());
+  const parsed = createProjectSchema.safeParse(
+    await req.json().catch(() => null)
+  );
   if (!parsed.success) {
     return NextResponse.json(
       ServerResponse(

@@ -1,6 +1,16 @@
 import "server-only";
 
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
+
+/**
+ * Filter for invites not yet accepted. On MongoDB an optional field that was
+ * never written is "unset", which `acceptedAt: null` alone does not match.
+ */
+export const notAccepted = {
+  OR: [{ acceptedAt: null }, { acceptedAt: { isSet: false } }],
+} satisfies Prisma.ProjectInviteWhereInput;
 
 type AcceptResult =
   | { ok: true; projectId: string }
@@ -45,7 +55,7 @@ export function getPendingInvites(email: string) {
   return prisma.projectInvite.findMany({
     where: {
       email: email.toLowerCase(),
-      acceptedAt: null,
+      ...notAccepted,
       expiresAt: { gt: new Date() },
     },
     include: {

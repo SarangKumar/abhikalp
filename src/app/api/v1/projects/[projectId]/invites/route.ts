@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { ASSIGNABLE_ROLES, isObjectId } from "@/lib/access";
 import { jsonError, parseBody, requireProject, type RouteCtx } from "@/lib/api";
+import { notAccepted } from "@/lib/invites";
 import { prisma } from "@/lib/prisma";
 import { getAppUrl } from "@/lib/url";
 
@@ -43,7 +44,7 @@ export async function POST(req: Request, { params }: RouteCtx) {
   const pending = await prisma.projectInvite.count({
     where: {
       projectId: project.id,
-      acceptedAt: null,
+      ...notAccepted,
       expiresAt: { gt: new Date() },
     },
   });
@@ -56,7 +57,7 @@ export async function POST(req: Request, { params }: RouteCtx) {
 
   // Replace any earlier pending invite for this email.
   await prisma.projectInvite.deleteMany({
-    where: { projectId: project.id, email, acceptedAt: null },
+    where: { projectId: project.id, email, ...notAccepted },
   });
   const invite = await prisma.projectInvite.create({
     data: {

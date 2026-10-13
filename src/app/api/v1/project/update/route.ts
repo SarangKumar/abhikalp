@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
   const parsed = createProjectSchema.safeParse(body);
   const projectId = typeof body?.projectId === "string" ? body.projectId : "";
   if (!parsed.success || !projectId) {

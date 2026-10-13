@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { projectId } = await req.json();
+  const { projectId } = (await req.json().catch(() => ({}))) as {
+    projectId?: unknown;
+  };
   const projectExists =
     typeof projectId === "string"
       ? await prisma.project.findFirst({

@@ -6,6 +6,7 @@ import MembersPanel from "@/components/dashboad/project/share-container";
 import { getSubscriptionConfig } from "@/config/subscription";
 import { siteConfig } from "@/config/site";
 import { can, getProjectAccess } from "@/lib/access";
+import { notAccepted } from "@/lib/invites";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ const SettingsPage = async ({
     ? await prisma.projectInvite.findMany({
         where: {
           projectId: project.id,
-          acceptedAt: null,
+          ...notAccepted,
           expiresAt: { gt: new Date() },
         },
         orderBy: { createdAt: "desc" },
