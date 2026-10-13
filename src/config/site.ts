@@ -5,12 +5,12 @@
  * rebrand without a code change.
  */
 const url = (
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://project-sphere.vercel.app"
+  process.env.NEXT_PUBLIC_APP_URL || "https://project-sphere.vercel.app"
 ).replace(/\/$/, "");
 
 export const siteConfig = {
-  name: process.env.NEXT_PUBLIC_APP_NAME ?? "Project Sphere",
-  shortName: process.env.NEXT_PUBLIC_APP_SHORT_NAME ?? "Sphere",
+  name: process.env.NEXT_PUBLIC_APP_NAME || "Project Sphere",
+  shortName: process.env.NEXT_PUBLIC_APP_SHORT_NAME || "Sphere",
   /** Letter shown in the square logo mark. */
   logoMark: "P",
   tagline: "Transform Your Project Workflow",

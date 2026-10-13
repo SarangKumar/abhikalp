@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getUserBySession } from "@/app/api/utils";
-import { getStripePriceId } from "@/config/subscription";
+import { getStripePriceId, isBillingConfigured } from "@/config/subscription";
 import { getOrCreateStripeCustomer } from "@/lib/billing";
 import { getAppUrl, getStripe } from "@/lib/stripe";
 
@@ -12,6 +12,12 @@ const bodySchema = z.object({ tier: z.enum(["GOLD", "PLATINUM"]) });
 
 /** Start a Stripe Checkout session for a paid plan. Returns { url }. */
 export async function POST(req: NextRequest) {
+  if (!isBillingConfigured()) {
+    return NextResponse.json(
+      { message: "Billing is not set up yet. Please try again later." },
+      { status: 503 }
+    );
+  }
   const user = await getUserBySession();
   if (!user) {
     return NextResponse.json(

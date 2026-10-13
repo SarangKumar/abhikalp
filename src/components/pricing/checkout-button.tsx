@@ -31,16 +31,19 @@ export function CheckoutButton({
   tier,
   isSignedIn,
   currentTier,
+  billingEnabled = true,
   children = "Get Started",
   ...props
 }: ButtonProps & {
   tier: SUBSCRIPTION_TIER;
   isSignedIn: boolean;
   currentTier?: SUBSCRIPTION_TIER;
+  billingEnabled?: boolean;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const isCurrent = isSignedIn && currentTier === tier;
+  const unavailable = tier !== "FREE" && !billingEnabled;
 
   async function onClick() {
     if (!isSignedIn) {
@@ -68,9 +71,17 @@ export function CheckoutButton({
     <Button
       {...props}
       onClick={onClick}
-      disabled={pending || isCurrent || props.disabled}
+      disabled={pending || isCurrent || unavailable || props.disabled}
     >
-      {pending ? <Spinner /> : isCurrent ? "Current plan" : children}
+      {pending ? (
+        <Spinner />
+      ) : isCurrent ? (
+        "Current plan"
+      ) : unavailable ? (
+        "Coming soon"
+      ) : (
+        children
+      )}
     </Button>
   );
 }

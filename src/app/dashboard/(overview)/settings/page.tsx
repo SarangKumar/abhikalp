@@ -15,7 +15,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getSubscriptionConfig } from "@/config/subscription";
+import {
+  getSubscriptionConfig,
+  isBillingConfigured,
+} from "@/config/subscription";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -80,7 +83,9 @@ const SettingsPage = async ({
                   ? "Upgrade plan"
                   : "Compare plans"}
               </Link>
-              {user.stripeCustomerId && <ManageBillingButton />}
+              {user.stripeCustomerId && isBillingConfigured() && (
+                <ManageBillingButton />
+              )}
             </div>
           </CardContent>
         </Card>

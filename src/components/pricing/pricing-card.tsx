@@ -28,9 +28,11 @@ const PricingCard = ({
   isPopular,
   isSignedIn,
   currentTier,
+  billingEnabled,
 }: PricingCardProps & {
   isSignedIn: boolean;
   currentTier?: SUBSCRIPTION_TIER;
+  billingEnabled?: boolean;
 }) => {
   return (
     <div
@@ -48,6 +50,7 @@ const PricingCard = ({
         tier={tier}
         isSignedIn={isSignedIn}
         currentTier={currentTier}
+        billingEnabled={billingEnabled}
         size="lg"
         variant={isPopular ? "default" : "secondary"}
         className="mt-2 w-full"

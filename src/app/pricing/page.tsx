@@ -9,6 +9,7 @@ import {
   PricingTablePlanLg,
   PricingTablePlanSm,
 } from "@/components/pricing/pricing-table";
+import { isBillingConfigured } from "@/config/subscription";
 import { siteConfig } from "@/config/site";
 import { pricingPlans } from "@/constants";
 
@@ -19,7 +20,11 @@ export const metadata: Metadata = {
 
 const PricingPage = async () => {
   const user = await getUserBySession().catch(() => null);
-  const auth = { isSignedIn: Boolean(user), currentTier: user?.subscription };
+  const auth = {
+    isSignedIn: Boolean(user),
+    currentTier: user?.subscription,
+    billingEnabled: isBillingConfigured(),
+  };
 
   return (
     <>

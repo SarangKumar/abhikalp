@@ -8,7 +8,11 @@ import { cn } from "@/lib/utils";
 import { CheckoutButton } from "./checkout-button";
 import type { PricingCardProps } from "./pricing-card";
 
-type AuthProps = { isSignedIn: boolean; currentTier?: SUBSCRIPTION_TIER };
+type AuthProps = {
+  isSignedIn: boolean;
+  currentTier?: SUBSCRIPTION_TIER;
+  billingEnabled?: boolean;
+};
 
 export const PricingTablePlanLg = (auth: AuthProps) => {
   return (
@@ -128,6 +132,7 @@ export const TableHead = ({
   className,
   isSignedIn,
   currentTier,
+  billingEnabled,
 }: PricingCardProps & AuthProps & { colSpan?: number; className?: string }) => {
   return (
     <th
@@ -147,6 +152,7 @@ export const TableHead = ({
         tier={tier}
         isSignedIn={isSignedIn}
         currentTier={currentTier}
+        billingEnabled={billingEnabled}
         className="w-full"
       />
     </th>

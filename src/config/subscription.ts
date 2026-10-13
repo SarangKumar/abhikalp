@@ -43,3 +43,24 @@ export function getTierForPriceId(
   if (priceId === process.env.STRIPE_PRICE_PLATINUM) return "PLATINUM";
   return null;
 }
+
+const looksReal = (value: string | undefined, prefix: RegExp) =>
+  Boolean(
+    value &&
+    prefix.test(value) &&
+    !/x{3,}|your|placeholder|changeme/i.test(value)
+  );
+
+/**
+ * True only when real-looking Stripe keys and both price ids are set.
+ * Placeholder values (e.g. `sk_test_xxx`) count as "not configured", so
+ * billing UI degrades to "Coming soon" instead of failing at click time.
+ * Server-only: reads non-public env vars.
+ */
+export function isBillingConfigured(): boolean {
+  return (
+    looksReal(process.env.STRIPE_SECRET_KEY, /^(sk|rk)_(test|live)_\w{16,}$/) &&
+    looksReal(process.env.STRIPE_PRICE_GOLD, /^price_\w{8,}$/) &&
+    looksReal(process.env.STRIPE_PRICE_PLATINUM, /^price_\w{8,}$/)
+  );
+}

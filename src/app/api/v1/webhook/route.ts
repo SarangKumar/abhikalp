@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 
+import { isBillingConfigured } from "@/config/subscription";
 import { syncSubscription } from "@/lib/billing";
 import { getStripe } from "@/lib/stripe";
 
@@ -22,7 +23,7 @@ const SUBSCRIPTION_EVENTS = new Set<Stripe.Event.Type>([
 export async function POST(req: NextRequest) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const signature = req.headers.get("stripe-signature");
-  if (!secret || !signature) {
+  if (!secret || !signature || !isBillingConfigured()) {
     return NextResponse.json(
       { error: "Webhook not configured" },
       { status: 400 }
